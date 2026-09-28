@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laboratório TRAJE — métodos com dados inventados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEDE8;--surface:#F8F8F5;--surface2:#FFFFFF;--ink:#1C1F26;--muted:#5C6070;--rule:#D2D3CA;--rule-strong:#B4B6AC;
+  --anil:#22306A;--anil-soft:#DDE2F2;--garanca:#A33A3F;--garanca-soft:#F4DEDF;--pastel:#2F6F62;--pastel-soft:#D7EAE4;--ocre:#A8741A;--ocre-soft:#F3E6CC;--violeta:#6B5CA5;--cinza:#7A7F8C;
+  --serif:"Spectral",Georgia,"Times New Roman",serif;--sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12151D;--surface:#1A1E29;--surface2:#212635;--ink:#E7E8EC;--muted:#A3A7B4;--rule:#2E3342;--rule-strong:#454B5E;
+  --anil:#A4B5F2;--anil-soft:#26305A;--garanca:#E6858A;--garanca-soft:#4A2226;--pastel:#74C2AE;--pastel-soft:#1E3D36;--ocre:#E3B058;--ocre-soft:#43351A;--violeta:#B1A5E8;--cinza:#9AA0AD;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151D;--surface:#1A1E29;--surface2:#212635;--ink:#E7E8EC;--muted:#A3A7B4;--rule:#2E3342;--rule-strong:#454B5E;
+  --anil:#A4B5F2;--anil-soft:#26305A;--garanca:#E6858A;--garanca-soft:#4A2226;--pastel:#74C2AE;--pastel-soft:#1E3D36;--ocre:#E3B058;--ocre-soft:#43351A;--violeta:#B1A5E8;--cinza:#9AA0AD;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%}
+.barra{height:14px;background:
+  repeating-linear-gradient(90deg,transparent 0 22px,rgba(255,255,255,.18) 22px 24px),
+  linear-gradient(180deg,var(--anil) 0 5px,var(--ocre) 5px 7px,var(--garanca) 7px 11px,var(--pastel) 11px 14px)}
+header.topo{padding:28px clamp(16px,4vw,40px) 18px;display:flex;flex-wrap:wrap;gap:16px 32px;align-items:flex-end;justify-content:space-between;border-bottom:1px solid var(--rule)}
+header.topo h1{font-family:var(--serif);font-weight:600;font-size:clamp(26px,3.6vw,38px);line-height:1.1;margin:0;letter-spacing:-.01em}
+header.topo p{margin:8px 0 0;max-width:62ch;color:var(--muted)}
+.selo{display:inline-block;margin-top:10px;padding:3px 10px;border:1px solid var(--garanca);color:var(--garanca);border-radius:3px;font-size:13px}
+.acoes{display:flex;gap:8px;flex-wrap:wrap}
+button,.btn{font:inherit;font-size:14px;padding:7px 13px;border-radius:4px;border:1px solid var(--rule-strong);background:var(--surface2);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--anil)}
+button.principal{background:var(--anil);color:var(--surface2);border-color:var(--anil)}
+button.pequeno{padding:3px 8px;font-size:13px}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.nav a:focus-visible{outline:2px solid var(--ocre);outline-offset:2px}
+.grelha{display:grid;grid-template-columns:230px minmax(0,1fr);align-items:start}
+nav.nav{position:sticky;top:env(safe-area-inset-top,0px);padding:22px 0 22px clamp(16px,3vw,32px);display:flex;flex-direction:column;gap:2px}
+.nav a{display:grid;grid-template-columns:22px 1fr;gap:6px;padding:8px 10px;border-radius:4px;color:var(--muted);text-decoration:none;font-size:14px;line-height:1.3;cursor:pointer}
+.nav a b{font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+.nav a:hover{color:var(--ink);background:var(--surface)}
+.nav a.ativo{color:var(--ink);background:var(--surface);box-shadow:inset 3px 0 0 var(--anil)}
+.nav a.ativo b{color:var(--anil)}
+main{padding:22px clamp(16px,4vw,44px) 80px;min-width:0}
+section.sec{display:none}section.sec.ativo{display:block}
+h2{font-family:var(--serif);font-weight:600;font-size:28px;margin:0 0 8px;line-height:1.2}
+h3{font-family:var(--serif);font-weight:600;font-size:20px;margin:34px 0 8px}
+h4{font-size:15px;font-weight:600;margin:20px 0 6px}
+.prosa{max-width:68ch;font-family:var(--serif);font-size:17px;line-height:1.62}
+.prosa p{margin:0 0 12px}
+.nota{max-width:70ch;color:var(--muted);font-size:14px}
+.painel{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:14px 16px;margin:14px 0}
+.controlos{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:flex-end}
+.campo{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.campo input,.campo select{font-size:14px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--surface2);border:1px solid var(--rule-strong);border-radius:3px;padding:5px 7px;max-width:100%}
+input[type=number]{width:84px}
+input[type=range]{padding:0;accent-color:var(--anil);width:160px}
+input[type=checkbox]{accent-color:var(--anil);width:16px;height:16px}
+textarea{width:100%;min-height:90px;line-height:1.5}
+.tabwrap{overflow-x:auto;margin:10px 0;border:1px solid var(--rule);border-radius:6px;background:var(--surface2)}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:6px 10px;text-align:left;border-bottom:1px solid var(--rule);vertical-align:middle}
+th{font-weight:600;font-size:13px;color:var(--muted);background:var(--surface);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:right}
+td input,td select{padding:3px 5px;font-size:13.5px}
+td input[type=text]{width:100%;min-width:90px}
+td input[type=number]{width:74px}
+.forte{background:var(--anil-soft)}
+.alerta{border-left:3px solid var(--garanca);background:var(--garanca-soft);padding:10px 14px;border-radius:0 4px 4px 0;margin:12px 0;max-width:80ch;font-size:14.5px}
+.info{border-left:3px solid var(--pastel);background:var(--pastel-soft);padding:10px 14px;border-radius:0 4px 4px 0;margin:12px 0;max-width:80ch;font-size:14.5px}
+.duas{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.cartoes{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
+.cartao{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:10px 14px;min-width:120px}
+.cartao span{display:block;font-size:12.5px;color:var(--muted)}
+.cartao strong{font-family:var(--serif);font-size:26px;font-weight:600;font-variant-numeric:tabular-nums lining-nums}
+.grafico{width:100%;height:auto;display:block;background:var(--surface2);border:1px solid var(--rule);border-radius:6px;margin:10px 0}
+.grafico text{font-family:var(--sans)}
+details{margin:12px 0}summary{cursor:pointer;font-weight:500}
+.tag{display:inline-block;padding:1px 7px;border-radius:3px;font-size:12.5px}
+.t-litoral{background:var(--anil-soft);color:var(--anil)}.t-campo{background:var(--ocre-soft);color:var(--ocre)}.t-serra{background:var(--pastel-soft);color:var(--pastel)}
+.pos{color:var(--pastel);font-weight:600}.neg{color:var(--garanca);font-weight:600}
+.papel{display:inline-flex;gap:2px}
+.modal{position:fixed;inset:0;background:rgba(10,12,18,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.modal.aberto{display:flex}
+.modal .caixa{background:var(--surface2);border-radius:8px;max-width:760px;width:100%;max-height:90vh;overflow:auto;padding:20px}
+.lista-grupos{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:13px}
+.lista-grupos label{display:inline-flex;align-items:center;gap:3px}
+.excerto{font-family:var(--serif);font-size:17px;font-style:italic}
+.aviso-pequeno{font-size:13px;color:var(--muted)}
+@media (max-width:860px){
+  .grelha{grid-template-columns:1fr}
+  nav.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);flex-direction:row;overflow-x:auto;padding:8px 12px;border-bottom:1px solid var(--rule)}
+  .nav a{white-space:nowrap;grid-template-columns:auto auto}
+  .nav a.ativo{box-shadow:inset 0 -3px 0 var(--anil)}
+}
+@media (prefers-reduced-motion:no-preference){.nav a{transition:background .15s,color .15s}}
+</style>
+</head>
+<body>
+<div class="barra" aria-hidden="true"></div>
+<header class="topo">
+  <div>
+    <h1>Laboratório TRAJE</h1>
+    <p>Os métodos da tese aplicados a dados inventados. Muda os dados, as escolhas e as variáveis e vê o que acontece às conclusões.</p>
+    <span class="selo">Todos os dados são fictícios</span>
+  </div>
+  <div class="acoes">
+    <button id="bExportar">Exportar</button>
+    <button id="bImportar">Importar</button>
+    <button id="bRepor">Repor dados originais</button>
+  </div>
+</header>
+<div class="grelha">
+  <nav class="nav" id="nav" aria-label="Secções"></nav>
+  <main id="main"></main>
+</div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo"><div class="caixa" id="modalCaixa"></div></div>
+<script>
+/* ---------- utilitários ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function pick(rnd,keys,probs){let s=probs.reduce((a,b)=>a+b,0),u=rnd()*s;for(let i=0;i<keys.length;i++){u-=probs[i];if(u<=0)return keys[i]}return keys[keys.length-1]}
+function normal(rnd){let u=0,v=0;while(u===0)u=rnd();while(v===0)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function parseCSV(txt){
+  const rows=[];let row=[],f='',q=false;txt=txt.replace(/^\ufeff/,'').replace(/\r/g,'');
+  for(let i=0;i<txt.length;i++){const c=txt[i];
+    if(q){if(c==='"'){if(txt[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true;else if(c===','){row.push(f);f=''}
+    else if(c==='\n'){row.push(f);rows.push(row);row=[];f=''}else f+=c}
+  if(f!==''||row.length){row.push(f);rows.push(row)}
+  const clean=rows.filter(r=>r.some(v=>v.trim()!==''));
+  if(!clean.length)return[];
+  const h=clean[0].map(s=>s.trim());
+  return clean.slice(1).map(r=>{const o={};h.forEach((k,j)=>o[k]=(r[j]??'').trim());return o})}
+function toCSV(rows,cols){cols=cols||Object.keys(rows[0]||{});const esc=v=>{v=v==null?'':String(v);return/[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+  return[cols.join(',')].concat(rows.map(r=>cols.map(c=>esc(r[c])).join(','))).join('\n')}
+
+/* ---------- álgebra: Jacobi para matrizes simétricas ---------- */
+function jacobiEigen(A){
+  const n=A.length,a=A.map(r=>r.slice()),V=Array.from({length:n},(_,i)=>Array.from({length:n},(_,j)=>i===j?1:0));
+  for(let sweep=0;sweep<100;sweep++){
+    let off=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)off+=a[i][j]*a[i][j];
+    if(off<1e-22)break;
+    for(let p=0;p<n;p++)for(let q=p+1;q<n;q++){
+      if(Math.abs(a[p][q])<1e-300)continue;
+      const th=(a[q][q]-a[p][p])/(2*a[p][q]);
+      const t=Math.sign(th||1)/(Math.abs(th)+Math.sqrt(th*th+1));
+      const c=1/Math.sqrt(t*t+1),s=t*c;
+      for(let k=0;k<n;k++){const akp=a[k][p],akq=a[k][q];a[k][p]=c*akp-s*akq;a[k][q]=s*akp+c*akq}
+      for(let k=0;k<n;k++){const apk=a[p][k],aqk=a[q][k];a[p][k]=c*apk-s*aqk;a[q][k]=s*apk+c*aqk}
+      for(let k=0;k<n;k++){const vkp=V[k][p],vkq=V[k][q];V[k][p]=c*vkp-s*vkq;V[k][q]=s*vkp+c*vkq}
+    }}
+  const vals=a.map((r,i)=>r[i]);const idx=vals.map((v,i)=>i).sort((x,y)=>vals[y]-vals[x]);
+  return{values:idx.map(i=>vals[i]),vectors:idx.map(i=>V.map(r=>r[i]))} /* vectors[k] = k-ésimo vetor próprio */
+}
+
+/* ---------- ACM ---------- */
+function mca(rows,active,sup,flipRules){
+  const n=rows.length,Q=active.length;
+  const cats=[];active.forEach(v=>{const lv=[...new Set(rows.map(r=>String(r[v])))].sort();lv.forEach(l=>cats.push({v,l,name:v+'='+l}))});
+  const J=cats.length,N=n*Q;
+  const Z=rows.map(r=>cats.map(c=>String(r[c.v])===c.l?1:0));
+  const colsum=cats.map((_,j)=>Z.reduce((s,z)=>s+z[j],0));
+  const c=colsum.map(x=>x/N),rr=1/n;
+  const S=Z.map(z=>z.map((x,j)=>(x/N-rr*c[j])/Math.sqrt(rr*c[j])));
+  const C=Array.from({length:J},(_,i)=>Array.from({length:J},(_,j)=>{let s=0;for(let k=0;k<n;k++)s+=S[k][i]*S[k][j];return s}));
+  const eg=jacobiEigen(C);
+  const K=eg.values.filter(v=>v>1e-10).length;
+  const lam=eg.values.slice(0,K),sv=lam.map(Math.sqrt);
+  const Vk=eg.vectors.slice(0,K);
+  const G=cats.map((_,j)=>Vk.map((vec,k)=>vec[j]*sv[k]/Math.sqrt(c[j])));
+  const F=S.map(srow=>Vk.map(vec=>{let s=0;for(let j=0;j<J;j++)s+=srow[j]*vec[j];return s/Math.sqrt(rr)}));
+  const flip=k=>{G.forEach(g=>g[k]*=-1);F.forEach(f=>f[k]*=-1)};
+  (flipRules||[]).forEach(([catName,k])=>{const j=cats.findIndex(x=>x.name===catName);if(j>=0&&k<K&&G[j][k]<0)flip(k)});
+  const tot=lam.reduce((a,b)=>a+b,0);
+  const benz=lam.map(l=>l>1/Q?Math.pow((Q/(Q-1))*(l-1/Q),2):0),bt=benz.reduce((a,b)=>a+b,0)||1;
+  const ctr=cats.map((_,j)=>lam.map((l,k)=>c[j]*G[j][k]*G[j][k]/l*100));
+  const cos2=G.map(g=>{const s=g.reduce((a,b)=>a+b*b,0)||1;return g.map(x=>x*x/s)});
+  const supOut=[];(sup||[]).forEach(v=>{const lv=[...new Set(rows.map(r=>String(r[v])))].sort();lv.forEach(l=>{
+    const idx=rows.map((r,i)=>String(r[v])===l?i:-1).filter(i=>i>=0),nk=idx.length;
+    const coord=lam.map((L,k)=>idx.reduce((s,i)=>s+F[i][k],0)/nk/Math.sqrt(L));
+    const vt=coord.map(x=>nk<n?x*Math.sqrt(nk*(n-1)/(n-nk)):0);
+    supOut.push({v,l,name:v+'='+l,n:nk,coord,vtest:vt})})});
+  return{cats,mass:c,lam,rawPct:lam.map(l=>l/tot*100),benzPct:benz.map(b=>b/bt*100),F,G,ctr,cos2,sup:supOut,Q,n,K,J}
+}
+
+/* ---------- classificação hierárquica (Lance-Williams) ---------- */
+function euclid(a,b){let s=0;for(let i=0;i<a.length;i++){const d=a[i]-b[i];s+=d*d}return Math.sqrt(s)}
+function hclust(D,method){ /* D: matriz de distâncias; devolve merges [a,b,dist,size] estilo scipy */
+  const n=D.length;const d=new Map();const key=(i,j)=>i<j?i*100000+j:j*100000+i;
+  const sq=method==='ward';
+  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)d.set(key(i,j),sq?D[i][j]*D[i][j]:D[i][j]);
+  const size={};let active=[];for(let i=0;i<n;i++){size[i]=1;active.push(i)}
+  const merges=[];let next=n;
+  while(active.length>1){
+    let best=Infinity,bi=-1,bj=-1;
+    for(let x=0;x<active.length;x++)for(let y=x+1;y<active.length;y++){const v=d.get(key(active[x],active[y]));if(v<best-1e-12){best=v;bi=active[x];bj=active[y]}}
+    const ni=size[bi],nj=size[bj],nn=next++;
+    size[nn]=ni+nj;
+    for(const k of active){if(k===bi||k===bj)continue;
+      const dik=d.get(key(bi,k)),djk=d.get(key(bj,k)),dij=best,nk=size[k];let v;
+      if(method==='ward')v=((ni+nk)*dik+(nj+nk)*djk-nk*dij)/(ni+nj+nk);
+      else if(method==='single')v=Math.min(dik,djk);
+      else if(method==='complete')v=Math.max(dik,djk);
+      else v=(ni*dik+nj*djk)/(ni+nj);
+      d.set(key(nn,k),v)}
+    merges.push([Math.min(bi,bj),Math.max(bi,bj),sq?Math.sqrt(best):best,ni+nj]);
+    active=active.filter(k=>k!==bi&&k!==bj);active.push(nn)}
+  return merges}
+function cutTree(merges,n,k){ /* etiquetas 0..k-1 */
+  const parent={};const find=x=>{while(parent[x]!==undefined&&parent[x]!==x)x=parent[x];return x};
+  const upto=merges.length-(k-1);
+  for(let i=0;i<upto;i++){const[a,b]=merges[i];parent[a]=n+i;parent[b]=n+i}
+  const roots=[],lab=[];for(let i=0;i<n;i++){const r=find(i);let idx=roots.indexOf(r);if(idx<0){roots.push(r);idx=roots.length-1}lab.push(idx)}
+  return lab}
+function wardPoints(P){const D=P.map(a=>P.map(b=>euclid(a,b)));return hclust(D,'ward')}
+
+/* ---------- Mantel ---------- */
+function upper(M,idx){const v=[];for(let i=0;i<idx.length;i++)for(let j=i+1;j<idx.length;j++)v.push(M[idx[i]][idx[j]]);return v}
+function pearson(x,y){const n=x.length;const mx=x.reduce((a,b)=>a+b,0)/n,my=y.reduce((a,b)=>a+b,0)/n;let sxy=0,sxx=0,syy=0;for(let i=0;i<n;i++){const a=x[i]-mx,b=y[i]-my;sxy+=a*b;sxx+=a*a;syy+=b*b}return sxx&&syy?sxy/Math.sqrt(sxx*syy):0}
+function permutations(n){const out=[],a=[...Array(n).keys()];const rec=k=>{if(k===n){out.push(a.slice());return}for(let i=k;i<n;i++){[a[k],a[i]]=[a[i],a[k]];rec(k+1);[a[k],a[i]]=[a[i],a[k]]}};rec(0);return out}
+function mantel(A,B,C,opts){
+  const n=A.length,id=[...Array(n).keys()];
+  const b=upper(B,id),cc=C?upper(C,id):null;
+  const stat=a=>{const rab=pearson(a,b);if(!cc)return rab;const rac=pearson(a,cc),rbc=pearson(b,cc);const den=Math.sqrt((1-rac*rac)*(1-rbc*rbc));return den?(rab-rac*rbc)/den:0};
+  const obs=stat(upper(A,id));
+  let perms,exact=n<=8;
+  if(exact)perms=permutations(n);else{const rnd=mulberry32((opts&&opts.seed)||42);perms=[id.slice()];for(let t=0;t<((opts&&opts.nperm)||9999);t++){const p=id.slice();for(let i=n-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[p[i],p[j]]=[p[j],p[i]]}perms.push(p)}}
+  let cnt=0;for(const p of perms){if(stat(upper(A,p))>=obs-1e-12)cnt++}
+  return{r:obs,p:cnt/perms.length,nperm:perms.length,exact}}
+
+/* ---------- redes ---------- */
+function brandes(nodes,adj){ /* não ponderado, não orientado, normalizado como networkx */
+  const CB={};nodes.forEach(v=>CB[v]=0);
+  for(const s of nodes){const Sx=[],P={},sig={},d={};nodes.forEach(v=>{P[v]=[];sig[v]=0;d[v]=-1});sig[s]=1;d[s]=0;const Qu=[s];
+    while(Qu.length){const v=Qu.shift();Sx.push(v);for(const w of adj[v]){if(d[w]<0){Qu.push(w);d[w]=d[v]+1}if(d[w]===d[v]+1){sig[w]+=sig[v];P[w].push(v)}}}
+    const del={};nodes.forEach(v=>del[v]=0);
+    while(Sx.length){const w=Sx.pop();for(const v of P[w])del[v]+=sig[v]/sig[w]*(1+del[w]);if(w!==s)CB[w]+=del[w]}}
+  const n=nodes.length,sc=n>2?1/((n-1)*(n-2)):0;nodes.forEach(v=>CB[v]*=sc);return CB}
+function louvain(nodes,W){ /* W[a][b]=peso; devolve lista de comunidades */
+  let comm={};nodes.forEach((v,i)=>comm[v]=i);
+  let graphNodes=nodes.slice(),Wg={};nodes.forEach(a=>{Wg[a]={};nodes.forEach(b=>{if(W[a]&&W[a][b])Wg[a][b]=W[a][b]})});
+  let members={};nodes.forEach(v=>members[v]=[v]);
+  for(let level=0;level<10;level++){
+    const m2=graphNodes.reduce((s,a)=>s+Object.values(Wg[a]).reduce((x,y)=>x+y,0),0);if(!m2)break;
+    const k={};graphNodes.forEach(a=>k[a]=Object.values(Wg[a]).reduce((x,y)=>x+y,0));
+    const c={};graphNodes.forEach((a,i)=>c[a]=i);const tot={};graphNodes.forEach((a,i)=>tot[i]=k[a]);
+    let moved=true,any=false;
+    while(moved){moved=false;
+      for(const a of graphNodes){const ca=c[a];const links={};for(const[b,w]of Object.entries(Wg[a])){if(b===a)continue;links[c[b]]=(links[c[b]]||0)+w}
+        tot[ca]-=k[a];let best=ca,bestGain=(links[ca]||0)-tot[ca]*k[a]/m2;
+        for(const[cc,w]of Object.entries(links)){const g=w-tot[cc]*k[a]/m2;if(g>bestGain+1e-12){bestGain=g;best=+cc}}
+        tot[best]+=k[a];if(best!==ca){c[a]=best;moved=true;any=true}}}
+    if(!any)break;
+    const groups={};graphNodes.forEach(a=>{(groups[c[a]]=groups[c[a]]||[]).push(a)});
+    const newNodes=Object.keys(groups).map(g=>'g'+level+'_'+g);const map={};Object.entries(groups).forEach(([g,arr])=>arr.forEach(a=>map[a]='g'+level+'_'+g));
+    const nW={};newNodes.forEach(x=>nW[x]={});
+    graphNodes.forEach(a=>Object.entries(Wg[a]).forEach(([b,w])=>{const A=map[a],B=map[b];nW[A][B]=(nW[A][B]||0)+w}));
+    const nMem={};newNodes.forEach(x=>nMem[x]=[]);graphNodes.forEach(a=>nMem[map[a]].push(...members[a]));
+    graphNodes=newNodes;Wg=nW;members=nMem}
+  return graphNodes.map(g=>members[g])}
+function dijkstra(nodes,E,src){ /* E[a]={b:len} */
+  const d={};nodes.forEach(v=>d[v]=Infinity);d[src]=0;const done=new Set();
+  while(done.size<nodes.length){let u=null,best=Infinity;for(const v of nodes)if(!done.has(v)&&d[v]<best){best=d[v];u=v}if(u===null)break;done.add(u);for(const[w,l]of Object.entries(E[u]||{}))if(d[u]+l<d[w])d[w]=d[u]+l}
+  return d}
+
+if(typeof module!=='undefined')module.exports={mulberry32,pick,normal,parseCSV,toCSV,jacobiEigen,mca,hclust,cutTree,wardPoints,euclid,mantel,pearson,upper,brandes,louvain,dijkstra};
+
+</script>
+<script>
+const DATA_GRUPOS=`grupo,zona,fundacao,periodo,entrada_ffp,arquivo,x,y,provincia,rede
+S1,serra,1975,1974-89,,parcial,60.7,46.3,Estremadura,R3
+L1,litoral,1974,1974-89,1985,sim,10.4,0.3,Estremadura,R2
+C1,campo,1990,1990 ou depois,1996,não,40.4,66.8,Beira Litoral,R2
+L2,litoral,1947,antes de 1974,1978,não,5.4,34.9,Estremadura,R3
+C2,campo,1982,1974-89,1987,parcial,32.7,57.4,Beira Litoral,R3
+L3,litoral,1987,1974-89,1994,sim,6.0,19.4,Estremadura,R3
+C3,campo,1981,1974-89,1987,parcial,40.4,81.4,Beira Litoral,R3
+C4,campo,1987,1974-89,,sim,31.6,79.6,Beira Litoral,R1
+C5,campo,1983,1974-89,1990,parcial,16.1,42.1,Estremadura,R2
+L4,litoral,1981,1974-89,1985,sim,5.6,87.0,Beira Litoral,R1
+C6,campo,1985,1974-89,1990,não,32.7,32.0,Estremadura,R3
+S2,serra,1982,1974-89,1991,sim,63.8,72.9,Beira Litoral,R3
+C7,campo,1968,antes de 1974,1978,sim,38.8,65.3,Beira Litoral,R2
+S3,serra,1944,antes de 1974,1978,sim,59.3,30.6,Estremadura,R2
+C8,campo,1975,1974-89,1986,não,30.6,66.8,Beira Litoral,R1
+L5,litoral,1987,1974-89,1992,parcial,13.8,46.8,Estremadura,R2
+S4,serra,2005,1990 ou depois,2008,parcial,69.3,29.9,Estremadura,R1
+S5,serra,1985,1974-89,,sim,47.8,54.3,Beira Litoral,R3
+L6,litoral,1977,1974-89,1983,sim,14.4,57.2,Beira Litoral,R2
+L7,litoral,1961,antes de 1974,,parcial,11.5,10.2,Estremadura,R1
+L8,litoral,2004,1990 ou depois,2013,parcial,13.7,1.8,Estremadura,R2
+C9,campo,1963,antes de 1974,1978,parcial,32.7,61.0,Beira Litoral,R2
+L9,litoral,1954,antes de 1974,1978,parcial,12.2,17.2,Estremadura,R1
+C10,campo,1980,1974-89,1981,não,16.5,28.6,Estremadura,R3
+C11,campo,1948,antes de 1974,1978,sim,38.9,69.0,Beira Litoral,R3
+C12,campo,2000,1990 ou depois,2003,parcial,17.9,56.9,Beira Litoral,R1
+C13,campo,2004,1990 ou depois,2013,parcial,41.8,2.4,Estremadura,R1
+L10,litoral,1984,1974-89,1987,não,5.7,59.2,Beira Litoral,R3
+S6,serra,1959,antes de 1974,,parcial,54.3,48.6,Estremadura,R3
+S7,serra,1951,antes de 1974,1978,parcial,59.5,27.0,Estremadura,R1
+L11,litoral,1949,antes de 1974,1978,sim,2.0,24.2,Estremadura,R2
+S8,serra,1976,1974-89,1982,sim,54.4,64.0,Beira Litoral,R3
+C14,campo,1960,antes de 1974,1978,não,26.1,46.7,Estremadura,R3
+L12,litoral,2006,1990 ou depois,2010,parcial,11.2,16.6,Estremadura,R1
+`;
+const DATA_TRAJES=`grupo,traje,regime_real,zona,fundacao,provincia,rede,proveniencia,fonte,periodo_inv,certeza,material
+S1,S1-T1,documental,serra,1974-89,Estremadura,R3,mista,fotografia,preciso,declarado,natural
+S1,S1-T2,documental,serra,1974-89,Estremadura,R3,herdada,fotografia,preciso,documentado,misto
+S1,S1-T3,documental,serra,1974-89,Estremadura,R3,reconstituida,familia,decada,documentado,misto
+S1,S1-T4,museologico,serra,1974-89,Estremadura,R3,herdada,museu_publicacao,decada,documentado,natural
+L1,L1-T1,documental,litoral,1974-89,Estremadura,R2,reconstituida,familia,decada,documentado,natural
+L1,L1-T2,documental,litoral,1974-89,Estremadura,R2,reconstituida,familia,preciso,documentado,misto
+L1,L1-T3,documental,litoral,1974-89,Estremadura,R2,herdada,fotografia,preciso,documentado,natural
+L1,L1-T4,documental,litoral,1974-89,Estremadura,R2,herdada,fotografia,preciso,documentado,natural
+C1,C1-T1,mercado,campo,1990 ou depois,Beira Litoral,R2,comprada,fornecedor,vago,inferido,misto
+C1,C1-T2,mercado,campo,1990 ou depois,Beira Litoral,R2,comprada,fornecedor,vago,declarado,misto
+C1,C1-T3,mercado,campo,1990 ou depois,Beira Litoral,R2,comprada,nenhuma,vago,declarado,misto
+C1,C1-T4,mercado,campo,1990 ou depois,Beira Litoral,R2,comprada,nenhuma,vago,declarado,sintetico
+L2,L2-T1,patrimonial,litoral,antes de 1974,Estremadura,R3,mista,familia,decada,declarado,natural
+L2,L2-T2,patrimonial,litoral,antes de 1974,Estremadura,R3,reconstituida,nenhuma,vago,declarado,natural
+L2,L2-T3,museologico,litoral,antes de 1974,Estremadura,R3,reconstituida,museu_publicacao,preciso,documentado,misto
+L2,L2-T4,museologico,litoral,antes de 1974,Estremadura,R3,reconstituida,museu_publicacao,decada,documentado,misto
+L2,L2-T5,patrimonial,litoral,antes de 1974,Estremadura,R3,herdada,familia,vago,documentado,misto
+L2,L2-T6,museologico,litoral,antes de 1974,Estremadura,R3,reconstituida,museu_publicacao,preciso,inferido,natural
+L2,L2-T7,patrimonial,litoral,antes de 1974,Estremadura,R3,herdada,familia,decada,declarado,natural
+L2,L2-T8,patrimonial,litoral,antes de 1974,Estremadura,R3,herdada,familia,vago,declarado,natural
+C2,C2-T1,museologico,campo,1974-89,Beira Litoral,R3,reconstituida,museu_publicacao,preciso,documentado,natural
+C2,C2-T2,documental,campo,1974-89,Beira Litoral,R3,herdada,fotografia,preciso,documentado,sintetico
+C2,C2-T3,museologico,campo,1974-89,Beira Litoral,R3,reconstituida,museu_publicacao,decada,documentado,natural
+C2,C2-T4,documental,campo,1974-89,Beira Litoral,R3,reconstituida,familia,decada,declarado,misto
+C2,C2-T5,documental,campo,1974-89,Beira Litoral,R3,mista,fotografia,preciso,documentado,natural
+C2,C2-T6,documental,campo,1974-89,Beira Litoral,R3,mista,fotografia,preciso,documentado,natural
+C2,C2-T7,museologico,campo,1974-89,Beira Litoral,R3,reconstituida,museu_publicacao,preciso,documentado,natural
+C2,C2-T8,documental,campo,1974-89,Beira Litoral,R3,reconstituida,museu_publicacao,preciso,documentado,misto
+L3,L3-T1,patrimonial,litoral,1974-89,Estremadura,R3,herdada,fotografia,decada,declarado,misto
+L3,L3-T2,museologico,litoral,1974-89,Estremadura,R3,reconstituida,museu_publicacao,preciso,documentado,natural
+L3,L3-T3,documental,litoral,1974-89,Estremadura,R3,mista,fotografia,decada,documentado,misto
+L3,L3-T4,documental,litoral,1974-89,Estremadura,R3,reconstituida,fotografia,preciso,declarado,misto
+L3,L3-T5,museologico,litoral,1974-89,Estremadura,R3,reconstituida,fotografia,preciso,declarado,natural
+L3,L3-T6,patrimonial,litoral,1974-89,Estremadura,R3,herdada,familia,vago,documentado,natural
+C3,C3-T1,documental,campo,1974-89,Beira Litoral,R3,reconstituida,fotografia,preciso,documentado,misto
+C3,C3-T2,documental,campo,1974-89,Beira Litoral,R3,reconstituida,fotografia,preciso,inferido,natural
+C3,C3-T3,mercado,campo,1974-89,Beira Litoral,R3,comprada,fornecedor,decada,declarado,misto
+C3,C3-T4,documental,campo,1974-89,Beira Litoral,R3,reconstituida,fotografia,decada,declarado,natural
+C3,C3-T5,documental,campo,1974-89,Beira Litoral,R3,mista,museu_publicacao,preciso,documentado,natural
+C3,C3-T6,documental,campo,1974-89,Beira Litoral,R3,reconstituida,fotografia,preciso,documentado,misto
+C3,C3-T7,museologico,campo,1974-89,Beira Litoral,R3,reconstituida,museu_publicacao,preciso,declarado,misto
+C4,C4-T1,documental,campo,1974-89,Beira Litoral,R1,mista,museu_publicacao,preciso,declarado,natural
+C4,C4-T2,documental,campo,1974-89,Beira Litoral,R1,reconstituida,fotografia,decada,declarado,sintetico
+C4,C4-T3,documental,campo,1974-89,Beira Litoral,R1,reconstituida,museu_publicacao,decada,inferido,misto
+C4,C4-T4,museologico,campo,1974-89,Beira Litoral,R1,reconstituida,museu_publicacao,preciso,documentado,natural
+C4,C4-T5,museologico,campo,1974-89,Beira Litoral,R1,reconstituida,museu_publicacao,vago,documentado,natural
+C4,C4-T6,documental,campo,1974-89,Beira Litoral,R1,herdada,fotografia,preciso,documentado,misto
+C4,C4-T7,documental,campo,1974-89,Beira Litoral,R1,reconstituida,fotografia,preciso,documentado,misto
+C5,C5-T1,mercado,campo,1974-89,Estremadura,R2,mista,nenhuma,decada,inferido,sintetico
+C5,C5-T2,documental,campo,1974-89,Estremadura,R2,reconstituida,familia,preciso,documentado,natural
+C5,C5-T3,museologico,campo,1974-89,Estremadura,R2,reconstituida,museu_publicacao,decada,documentado,natural
+C5,C5-T4,documental,campo,1974-89,Estremadura,R2,reconstituida,familia,preciso,declarado,natural
+C5,C5-T5,patrimonial,campo,1974-89,Estremadura,R2,herdada,familia,vago,declarado,natural
+C5,C5-T6,documental,campo,1974-89,Estremadura,R2,reconstituida,familia,preciso,documentado,misto
+L4,L4-T1,patrimonial,litoral,1974-89,Beira Litoral,R1,herdada,familia,vago,declarado,natural
+L4,L4-T2,documental,litoral,1974-89,Beira Litoral,R1,mista,museu_publicacao,preciso,documentado,natural
+L4,L4-T3,documental,litoral,1974-89,Beira Litoral,R1,mista,fotografia,decada,declarado,sintetico
+L4,L4-T4,patrimonial,litoral,1974-89,Beira Litoral,R1,herdada,familia,vago,declarado,natural
+L4,L4-T5,documental,litoral,1974-89,Beira Litoral,R1,mista,fotografia,decada,documentado,natural
+L4,L4-T6,museologico,litoral,1974-89,Beira Litoral,R1,reconstituida,museu_publicacao,preciso,declarado,natural
+L4,L4-T7,patrimonial,litoral,1974-89,Beira Litoral,R1,herdada,familia,decada,declarado,sintetico
+L4,L4-T8,documental,litoral,1974-89,Beira Litoral,R1,reconstituida,fotografia,preciso,documentado,natural
+C6,C6-T1,patrimonial,campo,1974-89,Estremadura,R3,herdada,nenhuma,vago,declarado,natural
+C6,C6-T2,museologico,campo,1974-89,Estremadura,R3,reconstituida,museu_publicacao,decada,documentado,natural
+C6,C6-T3,documental,campo,1974-89,Estremadura,R3,reconstituida,familia,decada,declarado,misto
+C6,C6-T4,documental,campo,1974-89,Estremadura,R3,reconstituida,familia,decada,documentado,misto
+C6,C6-T5,documental,campo,1974-89,Estremadura,R3,reconstituida,fotografia,preciso,declarado,sintetico
+C6,C6-T6,museologico,campo,1974-89,Estremadura,R3,reconstituida,museu_publicacao,decada,documentado,misto
+C6,C6-T7,patrimonial,campo,1974-89,Estremadura,R3,herdada,familia,decada,documentado,natural
+S2,S2-T1,museologico,serra,1974-89,Beira Litoral,R3,reconstituida,museu_publicacao,decada,documentado,sintetico
+S2,S2-T2,documental,serra,1974-89,Beira Litoral,R3,reconstituida,fotografia,decada,documentado,misto
+S2,S2-T3,documental,serra,1974-89,Beira Litoral,R3,reconstituida,fotografia,decada,documentado,natural
+S2,S2-T4,documental,serra,1974-89,Beira Litoral,R3,reconstituida,museu_publicacao,preciso,declarado,misto
+S2,S2-T5,mercado,serra,1974-89,Beira Litoral,R3,comprada,fotografia,decada,inferido,misto
+C7,C7-T1,patrimonial,campo,antes de 1974,Beira Litoral,R2,herdada,familia,vago,declarado,natural
+C7,C7-T2,mercado,campo,antes de 1974,Beira Litoral,R2,comprada,nenhuma,preciso,inferido,natural
+C7,C7-T3,patrimonial,campo,antes de 1974,Beira Litoral,R2,herdada,familia,vago,declarado,natural
+C7,C7-T4,patrimonial,campo,antes de 1974,Beira Litoral,R2,mista,familia,vago,declarado,natural
+S3,S3-T1,museologico,serra,antes de 1974,Estremadura,R2,reconstituida,museu_publicacao,preciso,documentado,natural
+S3,S3-T2,patrimonial,serra,antes de 1974,Estremadura,R2,herdada,familia,vago,declarado,misto
+S3,S3-T3,patrimonial,serra,antes de 1974,Estremadura,R2,herdada,familia,decada,declarado,natural
+S3,S3-T4,mercado,serra,antes de 1974,Estremadura,R2,comprada,fotografia,vago,inferido,misto
+S3,S3-T5,museologico,serra,antes de 1974,Estremadura,R2,reconstituida,museu_publicacao,preciso,documentado,sintetico
+S3,S3-T6,mercado,serra,antes de 1974,Estremadura,R2,comprada,nenhuma,preciso,declarado,natural
+S3,S3-T7,patrimonial,serra,antes de 1974,Estremadura,R2,herdada,familia,vago,declarado,natural
+C8,C8-T1,documental,campo,1974-89,Beira Litoral,R1,herdada,fotografia,vago,documentado,misto
+C8,C8-T2,patrimonial,campo,1974-89,Beira Litoral,R1,mista,familia,decada,declarado,natural
+C8,C8-T3,museologico,campo,1974-89,Beira Litoral,R1,reconstituida,museu_publicacao,vago,documentado,natural
+C8,C8-T4,documental,campo,1974-89,Beira Litoral,R1,herdada,fotografia,preciso,documentado,natural
+C8,C8-T5,documental,campo,1974-89,Beira Litoral,R1,reconstituida,fotografia,preciso,declarado,natural
+C8,C8-T6,patrimonial,campo,1974-89,Beira Litoral,R1,herdada,nenhuma,vago,declarado,misto
+C8,C8-T7,documental,campo,1974-89,Beira Litoral,R1,mista,fotografia,decada,documentado,natural
+C8,C8-T8,museologico,campo,1974-89,Beira Litoral,R1,herdada,familia,decada,declarado,sintetico
+L5,L5-T1,documental,litoral,1974-89,Estremadura,R2,reconstituida,familia,preciso,documentado,misto
+L5,L5-T2,patrimonial,litoral,1974-89,Estremadura,R2,herdada,familia,vago,documentado,sintetico
+L5,L5-T3,museologico,litoral,1974-89,Estremadura,R2,mista,museu_publicacao,decada,documentado,natural
+L5,L5-T4,patrimonial,litoral,1974-89,Estremadura,R2,mista,familia,decada,declarado,natural
+S4,S4-T1,mercado,serra,1990 ou depois,Estremadura,R1,comprada,fornecedor,vago,declarado,misto
+S4,S4-T2,documental,serra,1990 ou depois,Estremadura,R1,reconstituida,fotografia,decada,documentado,natural
+S4,S4-T3,documental,serra,1990 ou depois,Estremadura,R1,reconstituida,fotografia,preciso,documentado,natural
+S4,S4-T4,mercado,serra,1990 ou depois,Estremadura,R1,comprada,fornecedor,vago,declarado,sintetico
+S4,S4-T5,documental,serra,1990 ou depois,Estremadura,R1,reconstituida,familia,decada,documentado,natural
+S5,S5-T1,patrimonial,serra,1974-89,Beira Litoral,R3,herdada,familia,vago,declarado,natural
+S5,S5-T2,museologico,serra,1974-89,Beira Litoral,R3,reconstituida,museu_publicacao,decada,documentado,natural
+S5,S5-T3,museologico,serra,1974-89,Beira Litoral,R3,reconstituida,familia,vago,documentado,natural
+S5,S5-T4,museologico,serra,1974-89,Beira Litoral,R3,reconstituida,museu_publicacao,preciso,documentado,natural
+S5,S5-T5,patrimonial,serra,1974-89,Beira Litoral,R3,mista,familia,decada,declarado,natural
+S5,S5-T6,documental,serra,1974-89,Beira Litoral,R3,mista,familia,decada,declarado,natural
+L6,L6-T1,patrimonial,litoral,1974-89,Beira Litoral,R2,herdada,familia,vago,declarado,natural
+L6,L6-T2,documental,litoral,1974-89,Beira Litoral,R2,mista,fotografia,preciso,documentado,natural
+L6,L6-T3,museologico,litoral,1974-89,Beira Litoral,R2,herdada,museu_publicacao,decada,declarado,natural
+L6,L6-T4,documental,litoral,1974-89,Beira Litoral,R2,mista,fotografia,vago,documentado,misto
+L6,L6-T5,museologico,litoral,1974-89,Beira Litoral,R2,reconstituida,fotografia,preciso,documentado,natural
+L6,L6-T6,documental,litoral,1974-89,Beira Litoral,R2,mista,fotografia,decada,documentado,misto
+L7,L7-T1,patrimonial,litoral,antes de 1974,Estremadura,R1,herdada,familia,vago,declarado,natural
+L7,L7-T2,mercado,litoral,antes de 1974,Estremadura,R1,comprada,nenhuma,vago,inferido,sintetico
+L7,L7-T3,documental,litoral,antes de 1974,Estremadura,R1,herdada,fotografia,preciso,documentado,sintetico
+L7,L7-T4,museologico,litoral,antes de 1974,Estremadura,R1,reconstituida,museu_publicacao,preciso,declarado,natural
+L7,L7-T5,museologico,litoral,antes de 1974,Estremadura,R1,reconstituida,museu_publicacao,preciso,documentado,natural
+L7,L7-T6,documental,litoral,antes de 1974,Estremadura,R1,reconstituida,fotografia,decada,documentado,misto
+L7,L7-T7,museologico,litoral,antes de 1974,Estremadura,R1,reconstituida,museu_publicacao,decada,documentado,natural
+L8,L8-T1,mercado,litoral,1990 ou depois,Estremadura,R2,comprada,fornecedor,vago,declarado,sintetico
+L8,L8-T2,museologico,litoral,1990 ou depois,Estremadura,R2,reconstituida,museu_publicacao,decada,declarado,natural
+L8,L8-T3,mercado,litoral,1990 ou depois,Estremadura,R2,comprada,fornecedor,vago,declarado,sintetico
+L8,L8-T4,mercado,litoral,1990 ou depois,Estremadura,R2,mista,fornecedor,decada,declarado,sintetico
+L8,L8-T5,mercado,litoral,1990 ou depois,Estremadura,R2,comprada,fornecedor,decada,inferido,sintetico
+L8,L8-T6,mercado,litoral,1990 ou depois,Estremadura,R2,comprada,fornecedor,vago,inferido,sintetico
+L8,L8-T7,mercado,litoral,1990 ou depois,Estremadura,R2,comprada,fotografia,decada,documentado,sintetico
+C9,C9-T1,documental,campo,antes de 1974,Beira Litoral,R2,reconstituida,fotografia,decada,documentado,natural
+C9,C9-T2,documental,campo,antes de 1974,Beira Litoral,R2,reconstituida,fotografia,preciso,documentado,misto
+C9,C9-T3,documental,campo,antes de 1974,Beira Litoral,R2,reconstituida,fotografia,preciso,documentado,natural
+C9,C9-T4,patrimonial,campo,antes de 1974,Beira Litoral,R2,herdada,familia,vago,inferido,natural
+C9,C9-T5,documental,campo,antes de 1974,Beira Litoral,R2,reconstituida,fotografia,preciso,documentado,natural
+L9,L9-T1,patrimonial,litoral,antes de 1974,Estremadura,R1,mista,familia,vago,declarado,natural
+L9,L9-T2,documental,litoral,antes de 1974,Estremadura,R1,reconstituida,fotografia,preciso,documentado,natural
+L9,L9-T3,patrimonial,litoral,antes de 1974,Estremadura,R1,mista,familia,vago,declarado,misto
+L9,L9-T4,patrimonial,litoral,antes de 1974,Estremadura,R1,mista,familia,vago,declarado,natural
+C10,C10-T1,museologico,campo,1974-89,Estremadura,R3,reconstituida,fotografia,decada,documentado,natural
+C10,C10-T2,documental,campo,1974-89,Estremadura,R3,herdada,fotografia,preciso,documentado,misto
+C10,C10-T3,museologico,campo,1974-89,Estremadura,R3,reconstituida,museu_publicacao,decada,documentado,natural
+C10,C10-T4,museologico,campo,1974-89,Estremadura,R3,reconstituida,museu_publicacao,preciso,documentado,natural
+C10,C10-T5,documental,campo,1974-89,Estremadura,R3,herdada,fotografia,preciso,documentado,sintetico
+C10,C10-T6,museologico,campo,1974-89,Estremadura,R3,reconstituida,fotografia,decada,documentado,natural
+C11,C11-T1,museologico,campo,antes de 1974,Beira Litoral,R3,reconstituida,familia,preciso,declarado,natural
+C11,C11-T2,mercado,campo,antes de 1974,Beira Litoral,R3,reconstituida,fornecedor,vago,documentado,natural
+C11,C11-T3,museologico,campo,antes de 1974,Beira Litoral,R3,reconstituida,museu_publicacao,preciso,declarado,misto
+C11,C11-T4,patrimonial,campo,antes de 1974,Beira Litoral,R3,mista,nenhuma,vago,documentado,natural
+C11,C11-T5,patrimonial,campo,antes de 1974,Beira Litoral,R3,herdada,familia,vago,declarado,natural
+C11,C11-T6,patrimonial,campo,antes de 1974,Beira Litoral,R3,mista,familia,vago,declarado,natural
+C11,C11-T7,museologico,campo,antes de 1974,Beira Litoral,R3,reconstituida,museu_publicacao,decada,documentado,natural
+C11,C11-T8,patrimonial,campo,antes de 1974,Beira Litoral,R3,mista,familia,vago,declarado,natural
+C12,C12-T1,documental,campo,1990 ou depois,Beira Litoral,R1,reconstituida,fotografia,preciso,documentado,natural
+C12,C12-T2,mercado,campo,1990 ou depois,Beira Litoral,R1,comprada,fornecedor,vago,inferido,misto
+C12,C12-T3,mercado,campo,1990 ou depois,Beira Litoral,R1,comprada,fornecedor,vago,inferido,sintetico
+C12,C12-T4,mercado,campo,1990 ou depois,Beira Litoral,R1,comprada,fotografia,vago,declarado,sintetico
+C13,C13-T1,mercado,campo,1990 ou depois,Estremadura,R1,comprada,fornecedor,decada,declarado,sintetico
+C13,C13-T2,mercado,campo,1990 ou depois,Estremadura,R1,mista,fornecedor,decada,documentado,sintetico
+C13,C13-T3,mercado,campo,1990 ou depois,Estremadura,R1,mista,nenhuma,decada,inferido,sintetico
+C13,C13-T4,mercado,campo,1990 ou depois,Estremadura,R1,comprada,fornecedor,decada,inferido,misto
+C13,C13-T5,mercado,campo,1990 ou depois,Estremadura,R1,mista,nenhuma,vago,inferido,sintetico
+C13,C13-T6,documental,campo,1990 ou depois,Estremadura,R1,reconstituida,fotografia,preciso,documentado,natural
+L10,L10-T1,museologico,litoral,1974-89,Beira Litoral,R3,reconstituida,fotografia,preciso,documentado,natural
+L10,L10-T2,museologico,litoral,1974-89,Beira Litoral,R3,reconstituida,museu_publicacao,preciso,documentado,natural
+L10,L10-T3,museologico,litoral,1974-89,Beira Litoral,R3,mista,museu_publicacao,preciso,documentado,sintetico
+L10,L10-T4,museologico,litoral,1974-89,Beira Litoral,R3,reconstituida,fotografia,preciso,documentado,natural
+L10,L10-T5,documental,litoral,1974-89,Beira Litoral,R3,mista,fotografia,preciso,inferido,natural
+L10,L10-T6,documental,litoral,1974-89,Beira Litoral,R3,mista,museu_publicacao,preciso,documentado,natural
+L10,L10-T7,documental,litoral,1974-89,Beira Litoral,R3,reconstituida,fotografia,preciso,documentado,misto
+L10,L10-T8,museologico,litoral,1974-89,Beira Litoral,R3,mista,museu_publicacao,preciso,inferido,natural
+S6,S6-T1,mercado,serra,antes de 1974,Estremadura,R3,comprada,fornecedor,vago,declarado,sintetico
+S6,S6-T2,museologico,serra,antes de 1974,Estremadura,R3,reconstituida,museu_publicacao,preciso,declarado,natural
+S6,S6-T3,patrimonial,serra,antes de 1974,Estremadura,R3,mista,nenhuma,vago,documentado,natural
+S6,S6-T4,patrimonial,serra,antes de 1974,Estremadura,R3,herdada,familia,vago,declarado,natural
+S6,S6-T5,museologico,serra,antes de 1974,Estremadura,R3,reconstituida,museu_publicacao,preciso,documentado,misto
+S6,S6-T6,documental,serra,antes de 1974,Estremadura,R3,mista,fotografia,decada,declarado,natural
+S6,S6-T7,patrimonial,serra,antes de 1974,Estremadura,R3,herdada,familia,vago,declarado,natural
+S7,S7-T1,mercado,serra,antes de 1974,Estremadura,R1,comprada,fornecedor,vago,declarado,sintetico
+S7,S7-T2,mercado,serra,antes de 1974,Estremadura,R1,comprada,fornecedor,preciso,declarado,sintetico
+S7,S7-T3,patrimonial,serra,antes de 1974,Estremadura,R1,herdada,familia,vago,declarado,natural
+S7,S7-T4,documental,serra,antes de 1974,Estremadura,R1,mista,fotografia,decada,documentado,natural
+L11,L11-T1,patrimonial,litoral,antes de 1974,Estremadura,R2,mista,familia,vago,documentado,misto
+L11,L11-T2,mercado,litoral,antes de 1974,Estremadura,R2,comprada,fornecedor,decada,inferido,misto
+L11,L11-T3,mercado,litoral,antes de 1974,Estremadura,R2,comprada,nenhuma,vago,declarado,natural
+L11,L11-T4,patrimonial,litoral,antes de 1974,Estremadura,R2,herdada,nenhuma,vago,declarado,natural
+S8,S8-T1,mercado,serra,1974-89,Beira Litoral,R3,mista,fornecedor,vago,declarado,sintetico
+S8,S8-T2,museologico,serra,1974-89,Beira Litoral,R3,mista,museu_publicacao,preciso,documentado,natural
+S8,S8-T3,museologico,serra,1974-89,Beira Litoral,R3,reconstituida,museu_publicacao,decada,declarado,natural
+S8,S8-T4,museologico,serra,1974-89,Beira Litoral,R3,reconstituida,fotografia,preciso,documentado,natural
+S8,S8-T5,documental,serra,1974-89,Beira Litoral,R3,reconstituida,familia,decada,documentado,misto
+S8,S8-T6,documental,serra,1974-89,Beira Litoral,R3,reconstituida,fotografia,decada,documentado,misto
+C14,C14-T1,museologico,campo,antes de 1974,Estremadura,R3,herdada,museu_publicacao,decada,inferido,natural
+C14,C14-T2,museologico,campo,antes de 1974,Estremadura,R3,reconstituida,museu_publicacao,decada,documentado,natural
+C14,C14-T3,patrimonial,campo,antes de 1974,Estremadura,R3,herdada,familia,decada,declarado,natural
+C14,C14-T4,mercado,campo,antes de 1974,Estremadura,R3,comprada,fornecedor,decada,inferido,misto
+C14,C14-T5,patrimonial,campo,antes de 1974,Estremadura,R3,herdada,fotografia,vago,declarado,natural
+C14,C14-T6,documental,campo,antes de 1974,Estremadura,R3,reconstituida,familia,preciso,documentado,natural
+L12,L12-T1,mercado,litoral,1990 ou depois,Estremadura,R1,mista,nenhuma,vago,declarado,sintetico
+L12,L12-T2,mercado,litoral,1990 ou depois,Estremadura,R1,mista,fornecedor,decada,declarado,sintetico
+L12,L12-T3,mercado,litoral,1990 ou depois,Estremadura,R1,reconstituida,fornecedor,decada,declarado,sintetico
+L12,L12-T4,mercado,litoral,1990 ou depois,Estremadura,R1,comprada,nenhuma,decada,declarado,misto
+L12,L12-T5,museologico,litoral,1990 ou depois,Estremadura,R1,reconstituida,museu_publicacao,decada,documentado,natural
+L12,L12-T6,museologico,litoral,1990 ou depois,Estremadura,R1,mista,museu_publicacao,decada,documentado,natural
+L12,L12-T7,mercado,litoral,1990 ou depois,Estremadura,R1,comprada,nenhuma,decada,inferido,misto
+`;
+const DATA_MORFO=`grupo,saia_altura,bainha_altura,cintura_bainha,camadas,L,a,b_
+L11,0.731,2.6,0.245,6,23.2,7.4,-1.1
+L4,0.597,2.13,0.34,3,35.9,18.9,11.2
+L8,0.69,2.72,0.235,6,24.0,10.9,4.4
+C7,0.7,2.82,0.247,4,23.0,7.5,6.6
+C2,0.689,2.33,0.267,3,41.5,29.1,27.6
+C13,0.609,2.11,0.308,4,23.7,23.1,9.1
+S3,0.695,2.64,0.248,4,20.7,8.1,4.8
+S2,0.701,2.33,0.272,5,49.4,29.4,22.2
+`;
+
+</script>
+<script>
+/* ================= estado ================= */
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const f1=x=>(x==null||!isFinite(x))?'—':(+x).toFixed(1).replace('.',',');
+const f2=x=>(x==null||!isFinite(x))?'—':(+x).toFixed(2).replace('.',',');
+const f3=x=>(x==null||!isFinite(x))?'—':(+x).toFixed(3).replace('.',',');
+const pct=x=>(x==null||!isFinite(x))?'—':Math.round(x)+'%';
+const periodoDe=y=>{y=+y;return y<1974?'antes de 1974':(y<1990?'1974-89':'1990 ou depois')};
+const PERIODOS=['antes de 1974','1974-89','1990 ou depois'];
+const REGIMES=['patrimonial','documental','museologico','mercado'];
+const DIST={
+ patrimonial:{proveniencia:{herdada:.65,mista:.3,reconstituida:.05},fonte:{familia:.75,fotografia:.15,nenhuma:.1},periodo_inv:{vago:.7,decada:.25,preciso:.05},certeza:{declarado:.7,documentado:.2,inferido:.1},material:{natural:.75,misto:.2,sintetico:.05}},
+ documental:{proveniencia:{reconstituida:.6,mista:.3,herdada:.1},fonte:{fotografia:.75,familia:.15,museu_publicacao:.1},periodo_inv:{preciso:.6,decada:.35,vago:.05},certeza:{documentado:.7,declarado:.25,inferido:.05},material:{natural:.5,misto:.4,sintetico:.1}},
+ museologico:{proveniencia:{reconstituida:.8,mista:.15,herdada:.05},fonte:{museu_publicacao:.8,fotografia:.15,familia:.05},periodo_inv:{preciso:.5,decada:.45,vago:.05},certeza:{documentado:.8,declarado:.15,inferido:.05},material:{natural:.8,misto:.15,sintetico:.05}},
+ mercado:{proveniencia:{comprada:.75,mista:.2,reconstituida:.05},fonte:{fornecedor:.6,nenhuma:.3,fotografia:.1},periodo_inv:{vago:.4,decada:.5,preciso:.1},certeza:{declarado:.45,inferido:.45,documentado:.1},material:{sintetico:.55,misto:.35,natural:.1}}};
+const AMOSTRA0=['L11','L4','L8','C7','C2','C13','S3','S2'];
+const CONTEXTO=['zona','fundacao','provincia','rede'];
+const CORES=['var(--anil)','var(--garanca)','var(--pastel)','var(--ocre)','var(--violeta)','var(--cinza)'];
+const TRACOS=['','7 4','2 4','10 3 2 3','4 2','1 3'];
+
+function estadoInicial(){
+  const grupos=parseCSV(DATA_GRUPOS).map(g=>({...g,fundacao:+g.fundacao,x:+g.x,y:+g.y,amostra:AMOSTRA0.includes(g.grupo)}));
+  const trajes=parseCSV(DATA_TRAJES);
+  const morfo=parseCSV(DATA_MORFO).map(r=>({grupo:r.grupo,saia_altura:+r.saia_altura,bainha_altura:+r.bainha_altura,cintura_bainha:+r.cintura_bainha,camadas:+r.camadas,L:+r.L,a:+r.a,b:+r.b_}));
+  return{
+    versao:1,tab:0,grupos,trajes,
+    papeis:{regime_real:'oculta',zona:'sup',fundacao:'sup',provincia:'sup',rede:'sup',proveniencia:'ativa',fonte:'ativa',periodo_inv:'ativa',certeza:'ativa',material:'ativa'},
+    acm:{ax:0,ay:1,k:4,dims:3,mostrarTrajes:false,revelar:false,nomes:{},compVar:'provincia',compPor:'fundacao'},
+    gen:{seed:11,mistura:0,min:4,max:8,r3:0.2,pesos:{'antes de 1974':[.6,.15,.1,.15],'1974-89':[.15,.5,.25,.1],'1990 ou depois':[.05,.15,.1,.7]}},
+    ficha:[
+      {peca:'Saia exterior',local:'saia de cima',material:'lã',declara:'herdada, "da bisavó da D. Rosa"',verificado:'aparece numa fotografia de família de 1938',certeza:'documentado'},
+      {peca:'Saias interiores (3)',local:'saiotes',material:'algodão',declara:'reconstituídas em 1970',verificado:'a foto do grupo de 1970 mostra só 1 saiote',certeza:'declarado'},
+      {peca:'Avental',local:'avental de festa',material:'linho bordado',declara:'reconstituído a partir de um postal c. 1925',verificado:'o postal mostra avental liso; o bordado surge na foto de 1981',certeza:'documentado'},
+      {peca:'Lenço',local:'lenço de ramagens',material:'seda',declara:'comprado numa feira, anos 50',verificado:'nada a verificar',certeza:'declarado'},
+      {peca:'Cordão e arrecadas',local:'o ouro',material:'latão dourado',declara:'herdado',verificado:'réplica em latão (observação direta)',certeza:'inferido'},
+      {peca:'Chinelas',local:'chinelas de verniz',material:'pele sintética',declara:'compradas a fornecedor, 2019',verificado:'fatura no arquivo do grupo',certeza:'documentado'}],
+    tesauro:[
+      {local:'saiotes',controlado:'saia interior',referencia:'AAT: petticoats (confirmar)'},
+      {local:'saia de baixo',controlado:'saia interior',referencia:'AAT: petticoats (confirmar)'},
+      {local:'avental de festa',controlado:'avental',referencia:'AAT: aprons (confirmar)'},
+      {local:'o ouro',controlado:'joalharia de peito e orelha',referencia:'AAT: necklaces / earrings (confirmar)'}],
+    morfo:{linhas:morfo,vars:{saia_altura:true,bainha_altura:true,cintura_bainha:true,camadas:true,L:true,a:true,b:true},metodo:'average',k:2,gen:{seed:3,pesoRede:1,ruido:1}},
+    manequim:{n:3,sdPort:9,sdMan:1,seed:5,gA:'C7',gB:'S3'},
+    confronto:{
+      fontes:['Postal c. 1925','Grupo 1970','Grupo 1981','Modelo 3D 2026'],
+      critica:{data:'c. 1925',autor:'editor fictício "Tipos da região"',contexto:'fotografia de estúdio',finalidade:'postal turístico',nota:'A mesma modelo aparece em dois postais de outras "regiões" com trajes diferentes: o fotógrafo vestia-a.'},
+      linhas:[
+        {el:'Saia exterior',v:['escura, ao tornozelo','igual','igual','igual'],cod:'mantido'},
+        {el:'Saiotes visíveis',v:['1','1','3','3'],cod:'alterado'},
+        {el:'Avental',v:['liso, curto','liso','bordado, comprido','bordado, comprido'],cod:'alterado'},
+        {el:'Lenço',v:['atado na nuca','na nuca','sob o queixo','sob o queixo'],cod:'alterado'},
+        {el:'Xaile franjado',v:['sim','sim','não','não'],cod:'omitido'},
+        {el:'Ouro',v:['não visível','não','sim','sim'],cod:'acrescentado'},
+        {el:'Calçado',v:['tamancos','tamancos','chinelas','chinelas de verniz'],cod:'alterado'}],
+      props:[{rot:'Postal c. 1925',ano:1925,saia:.64,eSaia:.03,bainha:2.2,eBainha:.2},{rot:'Grupo 1970',ano:1970,saia:.66,eSaia:0,bainha:2.3,eBainha:0},{rot:'Grupo 1981',ano:1981,saia:.70,eSaia:0,bainha:2.8,eBainha:0},{rot:'Modelo 2026',ano:2026,saia:.70,eSaia:0,bainha:2.82,eBainha:0}],
+      ffp:1978},
+    rede:{pesos:{costureira:3,consultor:2,ensaiador:1,fundador:1},
+      pessoas:[
+        {nome:'Costureira A',tipo:'costureira',grupos:['L11','L8','C7','S3'],ativo:true},
+        {nome:'Costureira B',tipo:'costureira',grupos:['L4','C13'],ativo:true},
+        {nome:'Costureira C',tipo:'costureira',grupos:['C2','S2'],ativo:true},
+        {nome:'Consultor X (Federação)',tipo:'consultor',grupos:['C2','S2','L4'],ativo:true},
+        {nome:'Ensaiador E1',tipo:'ensaiador',grupos:['L11','C7'],ativo:true},
+        {nome:'Ensaiador E2',tipo:'ensaiador',grupos:['L4','C2'],ativo:true},
+        {nome:'Fundador F1',tipo:'fundador',grupos:['S3'],ativo:true},
+        {nome:'Ensaiador E3',tipo:'ensaiador',grupos:['S3','S2'],ativo:true}],
+      pos:{}},
+    oral:{meta:{id:'E-12',perfil:'antiga dançarina do C7'},
+      excerto:'Quando entrámos para a Federação veio cá um senhor ver os trajes. Disse que o avental liso era pobre, que em dia de festa as moças se enfeitavam. A minha mãe bordou-os todos nesse inverno.',
+      codigos:['Herança familiar','Exigência da Federação','Rigor, "está como era"','Custo e durabilidade','Orgulho local','Suspeita pós-25 de Abril','Embelezamento','Trabalho das mulheres da família'],
+      aplicados:['Exigência da Federação','Embelezamento','Trabalho das mulheres da família'],
+      lig:{peca:'C7-T2 / avental',evento:'visita de consultor, 1979',pessoa:'Mãe de E-12',tipo:'costureira',grupo:'C7'},
+      classes:['Patrimonial','Documental','Museológico','Mercado'],
+      tabela:[{cod:'Herança familiar',v:[64,18,9,12]},{cod:'Exigência da Federação',v:[11,47,52,21]},{cod:'Rigor, "está como era"',v:[22,58,61,15]},{cod:'Custo e durabilidade',v:[8,12,6,55]},{cod:'Orgulho local',v:[41,37,30,44]},{cod:'Suspeita pós-25 de Abril',v:[19,9,4,1]}],
+      nota:''},
+    prec:{familias:['reaccionário / fascista / FNAT','povo / popular / dinamização','autêntico / etnográfico / rigor','turismo / turistas'],
+      anos:[{ano:1972,artigos:48,v:[2,10,8,38]},{ano:1973,artigos:52,v:[2,9,9,41]},{ano:1974,artigos:31,v:[16,35,6,12]},{ano:1975,artigos:44,v:[27,48,7,5]},{ano:1976,artigos:39,v:[15,30,15,11]},{ano:1977,artigos:61,v:[6,18,33,20]},{ano:1978,artigos:73,v:[4,14,41,26]}],
+      modo:'pct',
+      coloc:[{ano:'1975',termos:'reaccionário, fascismo, povo, verdadeiro, dinamização'},{ano:'1978',termos:'autêntico, federação, trajes, etnográfico, região'}],
+      checks:[{t:'Li uma amostra de artigos para ver se a coocorrência corresponde a uma posição',ok:false},{t:'Separei os resultados por fonte (efeito de composição do corpus)',ok:false},{t:'Verifiquei numa amostra manual quantas ocorrências o OCR apanha',ok:false}]}
+  }}
+let S;
+const CHAVE='laboratorio-traje-v1';
+function carregar(){try{const t=localStorage.getItem(CHAVE);if(t){const o=JSON.parse(t);if(o&&o.versao===1)return o}}catch(e){}return estadoInicial()}
+let tGuardar=null;
+function guardar(){clearTimeout(tGuardar);tGuardar=setTimeout(()=>{try{localStorage.setItem(CHAVE,JSON.stringify(S))}catch(e){}},300)}
+const amostra=()=>S.grupos.filter(g=>g.amostra).map(g=>g.grupo);
+const grupoPor=c=>S.grupos.find(g=>g.grupo===c);
+function sincronizarTrajes(){const m={};S.grupos.forEach(g=>m[g.grupo]=g);S.trajes.forEach(t=>{const g=m[t.grupo];if(!g)return;if('zona'in t)t.zona=g.zona;if('fundacao'in t)t.fundacao=g.periodo;if('provincia'in t)t.provincia=g.provincia;if('rede'in t)t.rede=g.rede})}
+
+/* ================= navegação ================= */
+const SECOES=[
+  {t:'Recenseamento e amostra',r:()=>render0()},
+  {t:'Ficha e ACM',r:()=>render1()},
+  {t:'Morfometria',r:()=>render2()},
+  {t:'Confronto com imagens',r:()=>render3()},
+  {t:'Redes de circulação',r:()=>render4()},
+  {t:'História oral',r:()=>render5()},
+  {t:'O capítulo do PREC',r:()=>render6()}];
+function montarNav(){
+  document.getElementById('nav').innerHTML=SECOES.map((s,i)=>`<a href="#s${i}" data-tab="${i}" class="${i===S.tab?'ativo':''}"><b>${i}</b><span>${esc(s.t)}</span></a>`).join('');
+  document.getElementById('main').innerHTML=SECOES.map((s,i)=>`<section class="sec ${i===S.tab?'ativo':''}" id="s${i}" aria-label="${esc(s.t)}"></section>`).join('');
+  document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();irPara(+a.dataset.tab)}));
+}
+function irPara(i){S.tab=i;guardar();document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('ativo',+a.dataset.tab===i));document.querySelectorAll('section.sec').forEach((s,j)=>s.classList.toggle('ativo',j===i));SECOES[i].r();window.scrollTo({top:0})}
+function refazer(){guardar();SECOES[S.tab].r()}
+function sec(i){return document.getElementById('s'+i)}
+/* liga eventos genéricos: data-bind="caminho" com tipo */
+function setPath(obj,path,val){const p=path.split('.');let o=obj;for(let i=0;i<p.length-1;i++)o=o[p[i]];o[p[p.length-1]]=val}
+function getPath(obj,path){return path.split('.').reduce((o,k)=>o==null?o:o[k],obj)}
+function ligar(root,depois){
+  root.querySelectorAll('[data-bind]').forEach(el=>{
+    const ev=(el.type==='range')?'change':'change';
+    if(el.type==='range'){const out=root.querySelector(`[data-out="${el.dataset.bind}"]`);el.addEventListener('input',()=>{if(out)out.textContent=el.dataset.fmt==='pct'?Math.round(el.value*100)+'%':el.value})}
+    el.addEventListener(ev,()=>{let v=el.type==='checkbox'?el.checked:el.value;if(el.type==='number'||el.type==='range'||el.dataset.num!==undefined)v=v===''?'':+v;setPath(S,el.dataset.bind,v);(depois||refazer)(el)})})}
+
+/* ================= gráficos SVG ================= */
+function textoLargura(t,px){return String(t).length*px*0.56}
+function mapaDispersao(o){ /* o: {pontos:[{x,y,rot,tipo,cor,r}], w,h, eixoX, eixoY, fundo:[{x,y,cor}]} */
+  const W=o.w||680,H=o.h||500,m=46;
+  const todos=o.pontos.concat(o.fundo||[]);
+  let xs=todos.map(p=>p.x),ys=todos.map(p=>p.y);
+  let x0=Math.min(0,...xs),x1=Math.max(0,...xs),y0=Math.min(0,...ys),y1=Math.max(0,...ys);
+  const px=(x1-x0)*.08||1,py=(y1-y0)*.08||1;x0-=px;x1+=px;y0-=py;y1+=py;
+  const sc=Math.min((W-2*m)/(x1-x0),(H-2*m)/(y1-y0));
+  const cx=(W-(x1-x0)*sc)/2,cy=(H-(y1-y0)*sc)/2;
+  const X=x=>cx+(x-x0)*sc,Y=y=>H-cy-(y-y0)*sc;
+  let s=`<svg class="grafico" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria||'mapa')}">`;
+  s+=`<line x1="${m/2}" y1="${Y(0)}" x2="${W-m/2}" y2="${Y(0)}" style="stroke:var(--rule-strong)" stroke-width="1"/>`;
+  s+=`<line x1="${X(0)}" y1="${m/2}" x2="${X(0)}" y2="${H-m/2}" style="stroke:var(--rule-strong)" stroke-width="1"/>`;
+  s+=`<text x="${W-m/2}" y="${Y(0)+16}" text-anchor="end" font-size="12" style="fill:var(--muted)">${esc(o.eixoX)}</text>`;
+  s+=`<text x="${X(0)+6}" y="${m/2+10}" font-size="12" style="fill:var(--muted)">${esc(o.eixoY)}</text>`;
+  (o.fundo||[]).forEach(p=>{s+=`<circle cx="${X(p.x).toFixed(1)}" cy="${Y(p.y).toFixed(1)}" r="2.6" style="fill:${p.cor};opacity:.45"/>`});
+  const caixas=[];o.pontos.forEach(p=>caixas.push({x:X(p.x)-5,y:Y(p.y)-5,w:10,h:10}));
+  const sobre=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+  const etiquetas=[];
+  o.pontos.forEach((p,i)=>{
+    const x=X(p.x),y=Y(p.y);
+    if(p.tipo==='tri')s+=`<polygon points="${x},${y-6.5} ${x-6},${y+4.5} ${x+6},${y+4.5}" style="fill:${p.cor}"/>`;
+    else s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${p.r||4.5}" style="fill:${p.cor}"/>`;
+    const w=textoLargura(p.rot,12),h=13;
+    const cand=[[8,4,'start'],[-8,4,'end'],[0,-10,'middle'],[0,17,'middle'],[8,-8,'start'],[8,15,'start'],[-8,-8,'end'],[-8,15,'end'],[14,-18,'start'],[-14,-18,'end'],[14,26,'start'],[-14,26,'end']];
+    let escolha=null;
+    for(const[dx,dy,an]of cand){const bx=an==='start'?x+dx:an==='end'?x+dx-w:x+dx-w/2;const b={x:bx,y:y+dy-11,w,h};
+      if(b.x<2||b.x+b.w>W-2||b.y<2||b.y+b.h>H-2)continue;
+      if(caixas.some((c,j)=>j!==i&&j<o.pontos.length&&sobre(b,c)))continue;
+      if(etiquetas.some(e=>sobre(b,e)))continue;escolha={dx,dy,an,b};break}
+    let fraco=false;if(!escolha){escolha={dx:8,dy:4,an:'start',b:{x:x+8,y:y-7,w,h}};fraco=true}
+    etiquetas.push(escolha.b);
+    if(Math.abs(escolha.dx)>10||Math.abs(escolha.dy)>18)s+=`<line x1="${x}" y1="${y}" x2="${x+escolha.dx*0.7}" y2="${y+escolha.dy*0.6}" style="stroke:var(--muted)" stroke-width=".6" stroke-dasharray="2 2"/>`;
+    s+=`<text x="${(x+escolha.dx).toFixed(1)}" y="${(y+escolha.dy).toFixed(1)}" text-anchor="${escolha.an}" font-size="12" style="fill:${p.corTexto||'var(--ink)'};${fraco?'opacity:.6':''}">${esc(p.rot)}</text>`});
+  return s+'</svg>'}
+function graficoLinhas(o){ /* {rotulos, series:[{nome,valores,erros}], yTitulo, marcadores:[{i,rot}], h, xNum} */
+  const W=680,H=o.h||300,ml=52,mr=18,mt=18,mb=40;
+  const all=o.series.flatMap(s=>s.valores.map((v,i)=>v+((s.erros&&s.erros[i])||0))).filter(isFinite);
+  const allmin=o.series.flatMap(s=>s.valores.map((v,i)=>v-((s.erros&&s.erros[i])||0))).filter(isFinite);
+  let y0=o.yMin!=null?o.yMin:Math.min(0,...allmin),y1=Math.max(...all,y0+1);y1+=(y1-y0)*.08;
+  const n=o.rotulos.length;
+  const xv=o.xNum||o.rotulos.map((_,i)=>i);const xa=Math.min(...xv),xb=Math.max(...xv);
+  const X=v=>ml+((v-xa)/((xb-xa)||1))*(W-ml-mr),Y=v=>H-mb-(v-y0)/(y1-y0)*(H-mt-mb);
+  let s=`<svg class="grafico" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria||'gráfico de linhas')}">`;
+  const ticks=5;for(let t=0;t<=ticks;t++){const v=y0+(y1-y0)*t/ticks,yy=Y(v);s+=`<line x1="${ml}" x2="${W-mr}" y1="${yy}" y2="${yy}" style="stroke:var(--rule)" stroke-width="1"/><text x="${ml-6}" y="${yy+4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${Math.abs(y1-y0)<5?v.toFixed(2).replace('.',','):Math.round(v)}</text>`}
+  o.rotulos.forEach((r,i)=>{s+=`<text x="${X(xv[i])}" y="${H-mb+18}" text-anchor="middle" font-size="11.5" style="fill:var(--muted)">${esc(r)}</text>`});
+  (o.marcadores||[]).forEach(mk=>{const xx=X(mk.x);s+=`<line x1="${xx}" x2="${xx}" y1="${mt}" y2="${H-mb}" style="stroke:var(--garanca)" stroke-dasharray="4 3" stroke-width="1"/><text x="${xx+4}" y="${mt+10}" font-size="11.5" style="fill:var(--garanca)">${esc(mk.rot)}</text>`});
+  if(o.yTitulo)s+=`<text x="${ml}" y="${H-6}" font-size="11.5" style="fill:var(--muted)">${esc(o.yTitulo)}</text>`;
+  o.series.forEach((se,k)=>{const cor=CORES[k%CORES.length],tr=TRACOS[k%TRACOS.length];
+    const pts=se.valores.map((v,i)=>isFinite(v)?`${X(xv[i]).toFixed(1)},${Y(v).toFixed(1)}`:null).filter(Boolean).join(' ');
+    s+=`<polyline points="${pts}" fill="none" style="stroke:${cor}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" ${tr?`stroke-dasharray="${tr}"`:''}/>`;
+    se.valores.forEach((v,i)=>{if(!isFinite(v))return;const e=se.erros&&se.erros[i];if(e){s+=`<line x1="${X(xv[i])}" x2="${X(xv[i])}" y1="${Y(v-e)}" y2="${Y(v+e)}" style="stroke:${cor}" stroke-width="1.4"/>`}
+      s+=`<circle cx="${X(xv[i]).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3.6" style="fill:${cor};stroke:var(--surface2)" stroke-width="1.5"><title>${esc(se.nome)}: ${esc(o.rotulos[i])} = ${v}</title></circle>`})});
+  return s+'</svg>'+legenda(o.series.map(s=>s.nome))}
+function legenda(nomes){return`<div class="cartoes" style="gap:6px 18px;margin-top:0">${nomes.map((n,k)=>`<span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)"><svg width="30" height="10" aria-hidden="true"><line x1="1" y1="5" x2="29" y2="5" style="stroke:${CORES[k%CORES.length]}" stroke-width="2.4" ${TRACOS[k%TRACOS.length]?`stroke-dasharray="${TRACOS[k%TRACOS.length]}"`:''}/></svg>${esc(n)}</span>`).join('')}</div>`}
+function barrasH(itens){ /* [{rot,valor,cor}] */
+  const max=Math.max(1,...itens.map(i=>i.valor));const W=680,lh=28,H=itens.length*lh+14;
+  let s=`<svg class="grafico" viewBox="0 0 ${W} ${H}" role="img" aria-label="barras">`;
+  itens.forEach((it,i)=>{const y=8+i*lh,w=(W-230)*it.valor/max;s+=`<text x="12" y="${y+15}" font-size="13" style="fill:var(--ink)">${esc(it.rot)}</text><rect x="150" y="${y+3}" width="${Math.max(1,w)}" height="16" rx="2" style="fill:${it.cor||'var(--anil)'}"/><text x="${156+w}" y="${y+15}" font-size="12.5" style="fill:var(--muted)">${esc(it.txt??it.valor)}</text>`});
+  return s+'</svg>'}
+
+/* ================= 0. recenseamento ================= */
+function render0(){
+  const el=sec(0),G=S.grupos,A=G.filter(g=>g.amostra);
+  const cont=(arr,k)=>{const m={};arr.forEach(g=>m[g[k]]=(m[g[k]]||0)+1);return m};
+  const linhasBal=(k,ordem)=>{const a=cont(G,k),b=cont(A,k);const ks=ordem||Object.keys(a).sort();return ks.map(v=>`<tr><td>${esc(v)}</td><td class="num">${a[v]||0}</td><td class="num">${b[v]||0}</td></tr>`).join('')};
+  const filtro=S.f0||'todos';
+  const W=680,H=420;const X=x=>40+x/72*(W-80),Y=y=>H-30-y/92*(H-60);
+  let mapa=`<svg class="grafico" viewBox="0 0 ${W} ${H}" role="img" aria-label="Mapa fictício dos 34 grupos"><line x1="30" x2="${W-30}" y1="${Y(50)}" y2="${Y(50)}" style="stroke:var(--garanca)" stroke-dasharray="5 4"/><text x="${W-34}" y="${Y(50)-6}" text-anchor="end" font-size="12" style="fill:var(--garanca)">fronteira provincial fictícia (Beira Litoral acima, Estremadura abaixo)</text>`;
+  mapa+=`<text x="${X(7)}" y="${H-10}" text-anchor="middle" font-size="12" style="fill:var(--muted)">litoral</text><text x="${X(30)}" y="${H-10}" text-anchor="middle" font-size="12" style="fill:var(--muted)">campo</text><text x="${X(58)}" y="${H-10}" text-anchor="middle" font-size="12" style="fill:var(--muted)">serra</text>`;
+  G.forEach(g=>{const c=g.zona==='litoral'?'var(--anil)':g.zona==='campo'?'var(--ocre)':'var(--pastel)';mapa+=`<g data-mapa="${esc(g.grupo)}" style="cursor:pointer"><circle cx="${X(g.x)}" cy="${Y(g.y)}" r="${g.amostra?8:5}" style="fill:${g.amostra?c:'var(--surface2)'};stroke:${c}" stroke-width="2"><title>${esc(g.grupo)} · ${esc(g.zona)} · fundado em ${g.fundacao}</title></circle><text x="${X(g.x)+11}" y="${Y(g.y)+4}" font-size="11.5" style="fill:${g.amostra?'var(--ink)':'var(--muted)'}">${esc(g.grupo)}</text></g>`});
+  mapa+='</svg>';
+  const vis=G.map((g,i)=>({g,i})).filter(({g})=>filtro==='todos'||(filtro==='amostra'?g.amostra:g.zona===filtro));
+  el.innerHTML=`<h2>Recenseamento e amostra</h2>
+  <div class="prosa"><p>Os 34 grupos do recenseamento leve. Marca e desmarca grupos para compor a amostra intensiva e vê como fica o equilíbrio entre zonas, épocas de fundação e províncias. Também podes clicar nos pontos do mapa.</p><p>Se mudares a fundação ou a zona de um grupo, os trajes desse grupo passam a herdar os novos valores nas outras secções.</p></div>
+  <div class="cartoes"><div class="cartao"><span>grupos no recenseamento</span><strong>${G.length}</strong></div><div class="cartao"><span>grupos na amostra</span><strong>${A.length}</strong></div><div class="cartao"><span>amostra com arquivo (sim)</span><strong>${A.filter(g=>g.arquivo==='sim').length}</strong></div></div>
+  ${mapa}
+  <div class="duas">
+   <div><h4>Zona</h4><div class="tabwrap"><table><tr><th></th><th class="num">recenseamento</th><th class="num">amostra</th></tr>${linhasBal('zona',['litoral','campo','serra'])}</table></div></div>
+   <div><h4>Época de fundação</h4><div class="tabwrap"><table><tr><th></th><th class="num">recenseamento</th><th class="num">amostra</th></tr>${linhasBal('periodo',PERIODOS)}</table></div></div>
+   <div><h4>Província (divisão de 1936, fictícia)</h4><div class="tabwrap"><table><tr><th></th><th class="num">recenseamento</th><th class="num">amostra</th></tr>${linhasBal('provincia')}</table></div></div>
+   <div><h4>Arquivo próprio</h4><div class="tabwrap"><table><tr><th></th><th class="num">recenseamento</th><th class="num">amostra</th></tr>${linhasBal('arquivo',['sim','parcial','não'])}</table></div></div>
+  </div>
+  <h3>Os grupos</h3>
+  <div class="controlos"><label class="campo">Mostrar<select id="f0"><option value="todos">todos</option><option value="amostra">só a amostra</option><option value="litoral">litoral</option><option value="campo">campo</option><option value="serra">serra</option></select></label></div>
+  <div class="tabwrap"><table><tr><th>amostra</th><th>grupo</th><th>zona</th><th>fundação</th><th>época</th><th>entrada na Federação</th><th>arquivo</th><th>província</th><th>rede oculta</th></tr>
+  ${vis.map(({g,i})=>`<tr class="${g.amostra?'forte':''}"><td><input type="checkbox" data-bind="grupos.${i}.amostra" ${g.amostra?'checked':''} aria-label="incluir ${esc(g.grupo)}"></td><td><strong>${esc(g.grupo)}</strong></td>
+   <td><select data-bind="grupos.${i}.zona">${['litoral','campo','serra'].map(z=>`<option ${z===g.zona?'selected':''}>${z}</option>`).join('')}</select></td>
+   <td><input type="number" data-bind="grupos.${i}.fundacao" value="${g.fundacao}" min="1900" max="2030"></td><td>${esc(g.periodo)}</td>
+   <td><input type="text" data-bind="grupos.${i}.entrada_ffp" value="${esc(g.entrada_ffp)}" style="width:70px"></td>
+   <td><select data-bind="grupos.${i}.arquivo">${['sim','parcial','não'].map(z=>`<option ${z===g.arquivo?'selected':''}>${z}</option>`).join('')}</select></td>
+   <td><select data-bind="grupos.${i}.provincia">${['Beira Litoral','Estremadura'].map(z=>`<option ${z===g.provincia?'selected':''}>${z}</option>`).join('')}</select></td>
+   <td><select data-bind="grupos.${i}.rede">${['R1','R2','R3'].map(z=>`<option ${z===g.rede?'selected':''}>${z}</option>`).join('')}</select></td></tr>`).join('')}</table></div>
+  <p class="nota">A "rede oculta" é a verdade que usei para gerar os dados (quem fez os trajes de quem). Na vida real não a conheces à partida: é o que a secção 4 tenta reconstruir.</p>`;
+  el.querySelector('#f0').value=filtro;
+  el.querySelector('#f0').addEventListener('change',e=>{S.f0=e.target.value;render0()});
+  el.querySelectorAll('[data-mapa]').forEach(n=>n.addEventListener('click',()=>{const g=grupoPor(n.dataset.mapa);g.amostra=!g.amostra;guardar();render0()}));
+  ligar(el,()=>{S.grupos.forEach(g=>g.periodo=periodoDe(g.fundacao));sincronizarTrajes();refazer()});
+}
+
+/* ================= 1. ficha e ACM ================= */
+function gerarTrajes(){
+  const g=S.gen,rnd=mulberry32(+g.seed||1),rows=[];
+  S.grupos.forEach(gr=>{let p=(g.pesos[gr.periodo]||[1,1,1,1]).map(Number);if(gr.rede==='R3')p[2]+=+g.r3;const n=Math.floor(+g.min+rnd()*((+g.max)-(+g.min)+1));
+    for(let t=0;t<n;t++){const reg=pick(rnd,REGIMES,p);const r={grupo:gr.grupo,traje:gr.grupo+'-T'+(t+1),regime_real:reg,zona:gr.zona,fundacao:gr.periodo,provincia:gr.provincia,rede:gr.rede};
+      for(const v of Object.keys(DIST[reg])){const src=rnd()<+g.mistura?REGIMES[Math.floor(rnd()*4)]:reg;const d=DIST[src][v];r[v]=pick(rnd,Object.keys(d),Object.values(d))}
+      rows.push(r)}});
+  S.trajes=rows}
+let ACM=null;
+function calcularACM(){
+  const cols=Object.keys(S.trajes[0]||{}).filter(c=>c!=='grupo'&&c!=='traje');
+  cols.forEach(c=>{if(!S.papeis[c])S.papeis[c]='ignorar'});
+  const act=cols.filter(c=>S.papeis[c]==='ativa'),sup=cols.filter(c=>S.papeis[c]==='sup'),oc=cols.filter(c=>S.papeis[c]==='oculta');
+  if(act.length<2)return{erro:'Escolhe pelo menos duas variáveis ativas.',cols};
+  const M=mca(S.trajes,act,sup,[['proveniencia=comprada',0],['fonte=museu_publicacao',1]]);
+  if(M.K<1)return{erro:'Os dados não têm variação suficiente para a análise.',cols};
+  const dims=Math.min(+S.acm.dims,M.K),k=Math.min(+S.acm.k,M.n-1);
+  const P=M.F.map(f=>f.slice(0,dims));const lab=cutTree(wardPoints(P),P.length,k);
+  /* perfis */
+  const n=M.n,cl=[];for(let c=0;c<k;c++){const idx=lab.map((l,i)=>l===c?i:-1).filter(i=>i>=0);
+    const perfil=M.cats.map((ct,j)=>{const cnt=idx.filter(i=>String(S.trajes[i][ct.v])===ct.l).length;const share=cnt/idx.length,glob=M.mass[j]*M.Q;return{name:ct.name,v:ct.v,l:ct.l,share,glob,ratio:glob?share/glob:0}}).sort((a,b)=>b.ratio-a.ratio);
+    const supDom={};sup.forEach(v=>{const m={};idx.forEach(i=>{const x=String(S.trajes[i][v]);m[x]=(m[x]||0)+1});const top=Object.entries(m).sort((a,b)=>b[1]-a[1])[0];supDom[v]=top?[top[0],top[1]/idx.length]:null});
+    const cen=[0,1].map(d=>d<M.K?idx.reduce((s,i)=>s+M.F[i][d],0)/idx.length:0);
+    cl.push({c,n:idx.length,idx,perfil,supDom,cen})}
+  cl.forEach(x=>{const t=x.perfil[0]?.name||'';x.sugestao=/museu/.test(t)?'museológico':/(comprada|fornecedor|sintetico|inferido|nenhuma)/.test(t)?'mercado':/(herdada|familia|vago|declarado)/.test(t)?'patrimonial':/(reconstituida|fotografia|preciso|documentado)/.test(t)?'documental':'classe '+(x.c+1)});
+  return{M,act,sup,oc,cols,lab,cl,dims,k}}
+function render1(){
+  const el=sec(1);const R=calcularACM();ACM=R;const a=S.acm,g=S.gen;
+  const cols=R.cols;
+  let h=`<h2>Ficha descritiva e Análise de Correspondências Múltiplas</h2>
+  <div class="prosa"><p>A ficha é a espinha dorsal: tudo o que vais contar precisa de vocabulário controlado. Em baixo, a ACM corre sobre os ${S.trajes.length} trajes. Escolhe o papel de cada variável, o número de classes e os eixos, e vê o mapa mudar.</p></div>
+  <details><summary>Ficha do traje C7-T2 e thesaurus (editáveis)</summary>
+   <h4>Ficha: lavradeira em dia de festa</h4>
+   <div class="tabwrap"><table><tr><th>peça</th><th>designação local</th><th>material</th><th>o grupo declara</th><th>o que se verificou</th><th>certeza</th><th></th></tr>
+   ${S.ficha.map((p,i)=>`<tr>${['peca','local','material','declara','verificado'].map(k=>`<td><input type="text" data-bind="ficha.${i}.${k}" value="${esc(p[k])}"></td>`).join('')}<td><select data-bind="ficha.${i}.certeza">${['documentado','declarado','inferido'].map(z=>`<option ${z===p.certeza?'selected':''}>${z}</option>`).join('')}</select></td><td><button class="pequeno" data-del-ficha="${i}" aria-label="apagar linha">apagar</button></td></tr>`).join('')}</table></div>
+   <button class="pequeno" id="addFicha">Acrescentar peça</button>
+   <div class="cartoes">${['documentado','declarado','inferido'].map(c=>`<div class="cartao"><span>${c}</span><strong>${S.ficha.filter(p=>p.certeza===c).length}</strong></div>`).join('')}</div>
+   <h4>Thesaurus: termo local, termo controlado, referência</h4>
+   <div class="tabwrap"><table><tr><th>designação local</th><th>termo controlado</th><th>referência externa</th><th></th></tr>
+   ${S.tesauro.map((t,i)=>`<tr>${['local','controlado','referencia'].map(k=>`<td><input type="text" data-bind="tesauro.${i}.${k}" value="${esc(t[k])}"></td>`).join('')}<td><button class="pequeno" data-del-tes="${i}">apagar</button></td></tr>`).join('')}</table></div>
+   <button class="pequeno" id="addTes">Acrescentar termo</button>
+   <p class="nota">Termos controlados diferentes: ${new Set(S.tesauro.map(t=>t.controlado)).size}. Designações locais: ${new Set(S.tesauro.map(t=>t.local)).size}. Várias designações locais a apontar para o mesmo termo é o que torna os grupos comparáveis.</p>
+  </details>
+  <details><summary>Gerar novos trajes (os dados por detrás da ACM)</summary>
+   <p class="nota">Cada traje recebe um regime escondido, sorteado com os pesos da época de fundação do grupo; as variáveis são depois sorteadas a partir do perfil desse regime. A "mistura" baralha os perfis: sobe-a e vê a ACM perder a estrutura.</p>
+   <div class="controlos">
+    <label class="campo">Semente<input type="number" data-bind="gen.seed" value="${g.seed}"></label>
+    <label class="campo">Mistura entre regimes: <span data-out="gen.mistura" data-fmt="pct">${Math.round(g.mistura*100)}%</span><input type="range" min="0" max="1" step="0.05" data-bind="gen.mistura" data-fmt="pct" value="${g.mistura}"></label>
+    <label class="campo">Reforço museológico na rede R3<input type="number" step="0.05" data-bind="gen.r3" value="${g.r3}"></label>
+    <label class="campo">Trajes por grupo (mín.)<input type="number" data-bind="gen.min" value="${g.min}" min="1" max="20"></label>
+    <label class="campo">(máx.)<input type="number" data-bind="gen.max" value="${g.max}" min="1" max="30"></label>
+   </div>
+   <div class="tabwrap"><table><tr><th>época de fundação</th>${REGIMES.map(r=>`<th class="num">peso ${r}</th>`).join('')}</tr>
+   ${PERIODOS.map(p=>`<tr><td>${p}</td>${REGIMES.map((r,j)=>`<td class="num"><input type="number" step="0.05" min="0" data-bind="gen.pesos.${p}.${j}" value="${g.pesos[p][j]}"></td>`).join('')}</tr>`).join('')}</table></div>
+   <button class="principal" id="gerarT">Gerar novos trajes</button> <button id="reporT">Repor os trajes originais</button>
+   <p class="nota">Também podes importar os teus próprios dados (botão Importar, em cima): qualquer CSV com uma linha por traje e colunas categóricas funciona aqui.</p>
+  </details>
+  <h3>Papel de cada variável</h3>
+  <div class="tabwrap"><table><tr><th>variável</th><th>papel</th><th class="num">categorias</th></tr>
+  ${cols.map(c=>`<tr><td>${esc(c)}${CONTEXTO.includes(c)?' <span class="aviso-pequeno">(contexto)</span>':''}</td><td><select data-papel="${esc(c)}">${[['ativa','ativa (constrói os eixos)'],['sup','suplementar (projetada depois)'],['ignorar','ignorar'],['oculta','verdade escondida']].map(([v,t])=>`<option value="${v}" ${S.papeis[c]===v?'selected':''}>${t}</option>`).join('')}</select></td><td class="num">${new Set(S.trajes.map(t=>t[c])).size}</td></tr>`).join('')}</table></div>`;
+  if(R.erro){el.innerHTML=h+`<div class="alerta">${esc(R.erro)}</div>`;bind1(el);return}
+  const M=R.M,K=M.K,ax=Math.min(+a.ax,K-1),ay=Math.min(+a.ay,K-1);
+  const ctxAtivas=R.act.filter(c=>CONTEXTO.includes(c));
+  if(ctxAtivas.length){const soma=d=>M.cats.reduce((s,c,j)=>s+(ctxAtivas.includes(c.v)?M.ctr[j][d]:0),0);
+    h+=`<div class="alerta">Tens ${ctxAtivas.map(esc).join(', ')} como variável ativa. Contribui ${f1(soma(0))}% para o eixo 1${K>1?` e ${f1(soma(1))}% para o eixo 2`:''}. Os eixos passam a ser feitos, em parte, da variável cuja relação querias testar: qualquer associação que encontres com ela é parcialmente fabricada por ti.</div>`}
+  h+=`<h3>Quantos eixos interpretar?</h3>
+  <div class="tabwrap"><table><tr><th>eixo</th><th class="num">valor próprio</th><th class="num">% bruta</th><th class="num">% corrigida (Benzécri)</th></tr>
+  ${M.lam.slice(0,6).map((l,i)=>`<tr><td>${i+1}</td><td class="num">${f3(l)}</td><td class="num">${f1(M.rawPct[i])}</td><td class="num">${f1(M.benzPct[i])}</td></tr>`).join('')}</table></div>
+  <p class="nota">A percentagem bruta subestima o que os eixos explicam; a correção de Benzécri dá uma leitura mais realista. Com ${M.Q} variáveis ativas, só contam os eixos com valor próprio acima de 1/${M.Q} = ${f3(1/M.Q)}.</p>
+  <h3>O mapa</h3>
+  <div class="controlos">
+   <label class="campo">Eixo horizontal<select data-bind="acm.ax" data-num>${M.lam.slice(0,Math.min(K,5)).map((_,i)=>`<option value="${i}" ${i===ax?'selected':''}>eixo ${i+1}</option>`).join('')}</select></label>
+   <label class="campo">Eixo vertical<select data-bind="acm.ay" data-num>${M.lam.slice(0,Math.min(K,5)).map((_,i)=>`<option value="${i}" ${i===ay?'selected':''}>eixo ${i+1}</option>`).join('')}</select></label>
+   <label class="campo" style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" data-bind="acm.mostrarTrajes" ${a.mostrarTrajes?'checked':''}> mostrar os trajes, coloridos por classe</label>
+  </div>`;
+  const pts=M.cats.map((c,j)=>({x:M.G[j][ax],y:M.G[j][ay],rot:c.v+': '+c.l,tipo:'c',cor:'var(--pastel)'})).concat(M.sup.map(s=>({x:s.coord[ax]??0,y:s.coord[ay]??0,rot:s.v+': '+s.l,tipo:'tri',cor:'var(--garanca)',corTexto:'var(--garanca)'})));
+  const supPts=M.sup.map(s=>{const coord=[ax,ay].map(d=>{const idx=S.trajes.map((t,i)=>String(t[s.v])===s.l?i:-1).filter(i=>i>=0);return idx.reduce((z,i)=>z+M.F[i][d],0)/idx.length/Math.sqrt(M.lam[d])});return coord});
+  pts.forEach((p,i)=>{if(i>=M.cats.length){const c=supPts[i-M.cats.length];p.x=c[0];p.y=c[1]}});
+  const fundo=a.mostrarTrajes?M.F.map((f,i)=>({x:f[ax],y:f[ay],cor:CORES[R.lab[i]%CORES.length]})):[];
+  h+=mapaDispersao({pontos:pts,fundo,eixoX:`eixo ${ax+1} · ${f1(M.benzPct[ax])}%`,eixoY:`eixo ${ay+1} · ${f1(M.benzPct[ay])}%`,aria:'Mapa das categorias da ACM'});
+  h+=`<p class="nota">Círculos verdes: categorias ativas. Triângulos vermelhos: suplementares, projetadas sem influenciar os eixos.${a.mostrarTrajes?' Pontos claros: cada traje, com a cor da sua classe.':''}</p>`;
+  const media=100/M.J;
+  const ord=M.cats.map((c,j)=>({c,j})).sort((p,q)=>M.ctr[q.j][ax]-M.ctr[p.j][ax]);
+  h+=`<h3>O que é cada eixo: contribuições</h3>
+  <div class="tabwrap"><table><tr><th>categoria</th><th class="num">coord. eixo ${ax+1}</th><th class="num">coord. eixo ${ay+1}</th><th class="num">contrib. eixo ${ax+1}</th><th class="num">contrib. eixo ${ay+1}</th><th class="num">cos² no plano</th></tr>
+  ${ord.map(({c,j})=>`<tr><td>${esc(c.v)}: ${esc(c.l)}</td><td class="num">${f2(M.G[j][ax])}</td><td class="num">${f2(M.G[j][ay])}</td><td class="num ${M.ctr[j][ax]>media?'forte':''}">${f1(M.ctr[j][ax])}</td><td class="num ${M.ctr[j][ay]>media?'forte':''}">${f1(M.ctr[j][ay])}</td><td class="num">${f2(M.cos2[j][ax]+M.cos2[j][ay])}</td></tr>`).join('')}</table></div>
+  <p class="nota">Realçadas: contribuições acima da média (${f1(media)}%). São essas categorias que dão nome ao eixo.</p>`;
+  if(M.sup.length){h+=`<h3>Variáveis suplementares: valores-teste</h3>
+  <div class="tabwrap"><table><tr><th>categoria</th><th class="num">trajes</th><th class="num">valor-teste eixo ${ax+1}</th><th class="num">valor-teste eixo ${ay+1}</th></tr>
+  ${M.sup.map((s,i)=>{const vt=[ax,ay].map((d,z)=>{const c=supPts[i][z];return c*Math.sqrt(s.n*(M.n-1)/(M.n-s.n))});return`<tr><td>${esc(s.v)}: ${esc(s.l)}</td><td class="num">${s.n}</td>${vt.map(v=>`<td class="num ${Math.abs(v)>2?(v>0?'pos':'neg'):''}">${f2(v)}</td>`).join('')}</tr>`}).join('')}</table></div>
+  <p class="nota">Acima de 2 em valor absoluto (a cores), a categoria afasta-se significativamente do centro, mais ou menos ao nível dos 5%. Significativo não quer dizer causa: usa a verificação de composição em baixo.</p>
+  <h3>Verificar a composição</h3>
+  <div class="controlos"><label class="campo">Variável<select data-bind="acm.compVar">${R.sup.concat(R.act).map(v=>`<option ${v===a.compVar?'selected':''}>${esc(v)}</option>`).join('')}</select></label>
+  <label class="campo">Estratificar por<select data-bind="acm.compPor">${R.sup.concat(R.act).map(v=>`<option ${v===a.compPor?'selected':''}>${esc(v)}</option>`).join('')}</select></label></div>`;
+    if(a.compVar!==a.compPor&&S.trajes[0]&&a.compVar in S.trajes[0]&&a.compPor in S.trajes[0]){
+      const est=[...new Set(S.trajes.map(t=>t[a.compPor]))].sort(),niv=[...new Set(S.trajes.map(t=>t[a.compVar]))].sort();
+      h+=`<div class="tabwrap"><table><tr><th>${esc(a.compPor)}</th>${niv.map(v=>`<th class="num">${esc(v)}: média eixo ${ax+1} (n)</th>`).join('')}</tr>
+      ${est.map(e=>`<tr><td>${esc(e)}</td>${niv.map(v=>{const idx=S.trajes.map((t,i)=>t[a.compPor]===e&&t[a.compVar]===v?i:-1).filter(i=>i>=0);return`<td class="num">${idx.length?f2(idx.reduce((s,i)=>s+M.F[i][ax],0)/idx.length)+' ('+idx.length+')':'—'}</td>`}).join('')}</tr>`).join('')}
+      <tr><td><strong>total</strong></td>${niv.map(v=>{const idx=S.trajes.map((t,i)=>t[a.compVar]===v?i:-1).filter(i=>i>=0);return`<td class="num"><strong>${f2(idx.reduce((s,i)=>s+M.F[i][ax],0)/idx.length)} (${idx.length})</strong></td>`}).join('')}</tr></table></div>
+      <p class="nota">Se a diferença entre níveis que vês no total desaparece ou muda de sentido dentro de cada estrato, o efeito era de composição e não da variável.</p>`}}
+  h+=`<h3>As classes</h3>
+  <div class="controlos">
+   <label class="campo">Número de classes: <span data-out="acm.k">${a.k}</span><input type="range" min="2" max="6" step="1" data-bind="acm.k" value="${a.k}"></label>
+   <label class="campo">Eixos usados na classificação: <span data-out="acm.dims">${a.dims}</span><input type="range" min="1" max="${Math.min(6,K)}" step="1" data-bind="acm.dims" value="${Math.min(a.dims,K)}"></label>
+  </div>
+  <div class="tabwrap"><table><tr><th>classe</th><th>nome (edita)</th><th class="num">trajes</th><th>categorias sobre-representadas (na classe vs. total)</th>${R.sup.map(v=>`<th>${esc(v)} dominante</th>`).join('')}</tr>
+  ${R.cl.map(c=>{const key=R.k+'-'+c.c;const nome=a.nomes[key]??c.sugestao;return`<tr><td><span class="tag" style="background:${CORES[c.c%CORES.length]};color:var(--surface2)">${c.c+1}</span></td><td><input type="text" data-nome="${key}" value="${esc(nome)}" style="width:130px"></td><td class="num">${c.n}</td><td>${c.perfil.slice(0,3).map(p=>`${esc(p.v)}: ${esc(p.l)} ${pct(p.share*100)} (${pct(p.glob*100)})`).join('<br>')}</td>${R.sup.map(v=>`<td>${c.supDom[v]?esc(c.supDom[v][0])+' '+pct(c.supDom[v][1]*100):'—'}</td>`).join('')}</tr>`}).join('')}</table></div>
+  <p class="nota">O nome é uma interpretação tua: a sugestão automática olha só para a categoria mais sobre-representada. Valida cada classe nas fontes antes de lhe chamares "regime".</p>
+  <label style="display:inline-flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" data-bind="acm.revelar" ${a.revelar?'checked':''}> Revelar a verdade escondida (só possível com dados inventados)</label>`;
+  if(a.revelar&&R.oc.length){const ov=R.oc[0];const niv=[...new Set(S.trajes.map(t=>t[ov]))].sort();
+    const tab=R.cl.map(c=>niv.map(v=>c.idx.filter(i=>S.trajes[i][ov]===v).length));
+    const pure=tab.reduce((s,r)=>s+Math.max(...r),0)/M.n*100;
+    h+=`<div class="tabwrap"><table><tr><th>classe</th>${niv.map(v=>`<th class="num">${esc(v)}</th>`).join('')}</tr>${tab.map((r,c)=>`<tr><td>${c+1} · ${esc(a.nomes[R.k+'-'+c]??R.cl[c].sugestao)}</td>${r.map(x=>`<td class="num ${x===Math.max(...r)&&x>0?'forte':''}">${x}</td>`).join('')}</tr>`).join('')}</table></div>
+    <div class="info">${pct(pure)} dos trajes ficam numa classe dominada pelo seu regime verdadeiro. Os restantes são os casos de fronteira, muitas vezes os mais interessantes. Na tese não terás esta tabela: é por isso que a validação nas fontes é obrigatória.</div>`}
+  else if(a.revelar)h+=`<p class="nota">Não há nenhuma variável marcada como "verdade escondida".</p>`;
+  el.innerHTML=h;bind1(el)}
+function bind1(el){
+  ligar(el);
+  el.querySelectorAll('[data-papel]').forEach(s=>s.addEventListener('change',()=>{S.papeis[s.dataset.papel]=s.value;refazer()}));
+  el.querySelectorAll('[data-nome]').forEach(s=>s.addEventListener('change',()=>{S.acm.nomes[s.dataset.nome]=s.value;guardar()}));
+  el.querySelectorAll('[data-del-ficha]').forEach(b=>b.addEventListener('click',()=>{S.ficha.splice(+b.dataset.delFicha,1);refazer()}));
+  el.querySelectorAll('[data-del-tes]').forEach(b=>b.addEventListener('click',()=>{S.tesauro.splice(+b.dataset.delTes,1);refazer()}));
+  const q=id=>el.querySelector('#'+id);
+  q('addFicha')&&q('addFicha').addEventListener('click',()=>{S.ficha.push({peca:'',local:'',material:'',declara:'',verificado:'',certeza:'declarado'});refazer()});
+  q('addTes')&&q('addTes').addEventListener('click',()=>{S.tesauro.push({local:'',controlado:'',referencia:''});refazer()});
+  q('gerarT')&&q('gerarT').addEventListener('click',()=>{gerarTrajes();['regime_real','zona','fundacao','provincia','rede','proveniencia','fonte','periodo_inv','certeza','material'].forEach(c=>{if(!S.papeis[c])S.papeis[c]=estadoInicial().papeis[c]});refazer()});
+  q('reporT')&&q('reporT').addEventListener('click',()=>{S.trajes=parseCSV(DATA_TRAJES);sincronizarTrajes();refazer()});
+  el.querySelectorAll('details').forEach((d,i)=>{if(S['det1_'+i])d.open=true;d.addEventListener('toggle',()=>{S['det1_'+i]=d.open;guardar()})});
+}
+
+/* ================= 4 (usado por 2). rede ================= */
+function calcularRede(){
+  const samp=amostra(),P=S.rede.pessoas.filter(p=>p.ativo&&p.nome.trim());
+  const pessoas=P.map(p=>({...p,grupos:p.grupos.filter(g=>samp.includes(g))}));
+  const nodes=samp.concat(pessoas.map(p=>'@'+p.nome));const adj={};nodes.forEach(v=>adj[v]=[]);
+  pessoas.forEach(p=>p.grupos.forEach(g=>{adj['@'+p.nome].push(g);adj[g].push('@'+p.nome)}));
+  const bc=brandes(nodes,adj);
+  const W={};samp.forEach(a=>W[a]={});const via={};
+  for(let i=0;i<samp.length;i++)for(let j=i+1;j<samp.length;j++){let w=0,v=[];pessoas.forEach(p=>{if(p.grupos.includes(samp[i])&&p.grupos.includes(samp[j])){w+=+(S.rede.pesos[p.tipo]??1);v.push(p.nome)}});if(w>0){W[samp[i]][samp[j]]=w;W[samp[j]][samp[i]]=w;via[samp[i]+'|'+samp[j]]=v}}
+  const comms=samp.length?louvain(samp,W):[];
+  const E={};samp.forEach(a=>{E[a]={};Object.entries(W[a]).forEach(([b,w])=>E[a][b]=1/w)});
+  const D=samp.map(a=>{const d=dijkstra(samp,E,a);return samp.map(b=>d[b])});
+  const desligada=D.some(r=>r.some(x=>!isFinite(x)));
+  let maxF=0;D.forEach(r=>r.forEach(x=>{if(isFinite(x))maxF=Math.max(maxF,x)}));
+  const Dfix=D.map(r=>r.map(x=>isFinite(x)?x:maxF+1));
+  return{samp,pessoas,nodes,adj,bc,W,via,comms,D,Dfix,desligada}}
+function comunidadeDe(R,g){return R.comms.findIndex(c=>c.includes(g))}
+
+/* ================= 2. morfometria ================= */
+const PERFIL_REDE={R1:{saia_altura:.60,bainha_altura:2.10,cintura_bainha:.30,camadas:3,L:35,a:20,b:12},R2:{saia_altura:.70,bainha_altura:2.70,cintura_bainha:.24,camadas:5,L:25,a:8,b:5},R3:{saia_altura:.66,bainha_altura:2.35,cintura_bainha:.27,camadas:4,L:45,a:30,b:25}};
+const PERFIL_ZONA={litoral:{saia_altura:.72,bainha_altura:2.80,cintura_bainha:.23,camadas:6,L:22,a:6,b:2},campo:{saia_altura:.64,bainha_altura:2.30,cintura_bainha:.29,camadas:4,L:38,a:22,b:14},serra:{saia_altura:.62,bainha_altura:2.10,cintura_bainha:.31,camadas:3,L:30,a:15,b:20}};
+const RUIDO={saia_altura:.015,bainha_altura:.08,cintura_bainha:.012,camadas:.7,L:4,a:3,b:3};
+const MVARS=[['saia_altura','saia/altura'],['bainha_altura','bainha/altura'],['cintura_bainha','cintura/bainha'],['camadas','camadas'],['L','L*'],['a','a*'],['b','b*']];
+function gerarMedida(g,rnd){const w=+S.morfo.gen.pesoRede,nz=+S.morfo.gen.ruido,pr=PERFIL_REDE[g.rede]||PERFIL_REDE.R1,pz=PERFIL_ZONA[g.zona]||PERFIL_ZONA.campo;const o={grupo:g.grupo};
+  MVARS.forEach(([k])=>{let v=w*pr[k]+(1-w)*pz[k]+normal(rnd)*RUIDO[k]*nz;o[k]=k==='camadas'?Math.max(1,Math.round(v)):+v.toFixed(k==='L'||k==='a'||k==='b'?1:3)});return o}
+function render2(){
+  const el=sec(2),m=S.morfo,samp=amostra();
+  const falta=samp.filter(g=>!m.linhas.find(r=>r.grupo===g));
+  const linhas=samp.map(g=>m.linhas.find(r=>r.grupo===g)).filter(Boolean);
+  const vs=MVARS.filter(([k])=>m.vars[k]).map(([k])=>k);
+  /* manequim */
+  const mq=S.manequim,gA=m.linhas.find(r=>r.grupo===mq.gA)||linhas[0],gB=m.linhas.find(r=>r.grupo===mq.gB)||linhas[1];
+  let manHtml='';
+  if(gA&&gB){const rnd=mulberry32(+mq.seed||1);const caps=[];
+    for(let i=0;i<+mq.n;i++)caps.push({c:'Portadora '+(i+1),s:gA.saia_altura*(1+normal(rnd)*mq.sdPort/100*0.3),b:gA.bainha_altura*(1+normal(rnd)*mq.sdPort/100),t:'p'});
+    for(let i=0;i<+mq.n;i++)caps.push({c:'Manequim, sessão '+(i+1),s:gA.saia_altura*(1+normal(rnd)*mq.sdMan/100*0.5),b:gA.bainha_altura*(1+normal(rnd)*mq.sdMan/100),t:'m'});
+    const cv=(arr,k)=>{const x=arr.map(r=>r[k]),mu=x.reduce((a,b)=>a+b,0)/x.length;return Math.sqrt(x.reduce((a,b)=>a+(b-mu)**2,0)/(x.length-1))/mu*100};
+    const cvP=cv(caps.filter(c=>c.t==='p'),'b'),cvM=cv(caps.filter(c=>c.t==='m'),'b');
+    const dif=Math.abs(gA.bainha_altura-gB.bainha_altura)/((gA.bainha_altura+gB.bainha_altura)/2)*100;
+    manHtml=`<div class="controlos">
+     <label class="campo">Traje medido<select data-bind="manequim.gA">${m.linhas.map(r=>`<option ${r.grupo===mq.gA?'selected':''}>${r.grupo}</option>`).join('')}</select></label>
+     <label class="campo">Comparar com<select data-bind="manequim.gB">${m.linhas.map(r=>`<option ${r.grupo===mq.gB?'selected':''}>${r.grupo}</option>`).join('')}</select></label>
+     <label class="campo">Capturas de cada tipo: <span data-out="manequim.n">${mq.n}</span><input type="range" min="2" max="8" step="1" data-bind="manequim.n" value="${mq.n}"></label>
+     <label class="campo">Variação entre corpos (%): <span data-out="manequim.sdPort">${mq.sdPort}</span><input type="range" min="0" max="25" step="1" data-bind="manequim.sdPort" value="${mq.sdPort}"></label>
+     <label class="campo">Variação do manequim (%): <span data-out="manequim.sdMan">${mq.sdMan}</span><input type="range" min="0" max="10" step="0.5" data-bind="manequim.sdMan" value="${mq.sdMan}"></label>
+     <label class="campo">Semente<input type="number" data-bind="manequim.seed" value="${mq.seed}"></label></div>
+     <div class="tabwrap"><table><tr><th>captura de ${esc(gA.grupo)}</th><th class="num">saia/altura</th><th class="num">bainha/altura</th></tr>${caps.map(c=>`<tr><td>${c.c}</td><td class="num">${f3(c.s)}</td><td class="num">${f2(c.b)}</td></tr>`).join('')}</table></div>
+     <div class="cartoes"><div class="cartao"><span>variação da bainha nas portadoras</span><strong>${f1(cvP)}%</strong></div><div class="cartao"><span>variação da bainha no manequim</span><strong>${f1(cvM)}%</strong></div><div class="cartao"><span>diferença ${esc(gA.grupo)} vs ${esc(gB.grupo)}</span><strong>${f1(dif)}%</strong></div></div>
+     <div class="${cvP>dif?'alerta':'info'}">${cvP>dif?`Nas portadoras, a variação entre corpos (${f1(cvP)}%) é maior do que a diferença entre os dois grupos (${f1(dif)}%): estarias a medir corpos, não trajes.`:`Aqui a diferença entre grupos (${f1(dif)}%) supera a variação entre corpos (${f1(cvP)}%), mas o manequim continua a dar medidas ${cvM<cvP?'muito ':''}mais estáveis.`}</div>`}
+  /* distâncias e testes */
+  let resto='';
+  if(linhas.length<3)resto=`<div class="alerta">Precisas de pelo menos 3 grupos com medidas na amostra.</div>`;
+  else if(vs.length<1)resto=`<div class="alerta">Escolhe pelo menos uma medida.</div>`;
+  else{
+    const X=linhas.map(r=>vs.map(k=>+r[k]));const mu=vs.map((_,j)=>X.reduce((s,x)=>s+x[j],0)/X.length);const sd=vs.map((_,j)=>Math.sqrt(X.reduce((s,x)=>s+(x[j]-mu[j])**2,0)/(X.length-1))||1);
+    const Z=X.map(x=>x.map((v,j)=>(v-mu[j])/sd[j]));const Dm=Z.map(a=>Z.map(b=>euclid(a,b)));
+    const gs=linhas.map(r=>grupoPor(r.grupo));const Dg=gs.map(a=>gs.map(b=>Math.hypot(a.x-b.x,a.y-b.y)));const Dp=gs.map(a=>gs.map(b=>a.provincia===b.provincia?0:1));
+    const R=calcularRede();const ids=linhas.map(r=>R.samp.indexOf(r.grupo));const Dn=ids.map(i=>ids.map(j=>R.Dfix[i][j]));
+    const merges=hclust(Dm,m.metodo);const n=linhas.length;
+    /* ordem das folhas */
+    const kids={};merges.forEach(([a,b],i)=>kids[n+i]=[a,b]);const ordem=[];const rec=x=>{if(x<n)ordem.push(x);else{rec(kids[x][0]);rec(kids[x][1])}};rec(n+merges.length-1);
+    const kk=Math.min(+m.k,n);const lab=cutTree(merges,n,kk);
+    const Wd=680,lh=26,Hd=n*lh+50,maxh=merges[merges.length-1][2]||1,xL=120,xR=Wd-30;
+    const pos={};ordem.forEach((leaf,i)=>pos[leaf]={y:22+i*lh+lh/2,x:xR});
+    const Xh=hh=>xR-(hh/maxh)*(xR-xL-10);
+    let dend=`<svg class="grafico" viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="Dendrograma">`;
+    merges.forEach(([a,b,hh],i)=>{const pa=pos[a],pb=pos[b],xx=Xh(hh);dend+=`<path d="M${pa.x} ${pa.y}H${xx}V${pb.y}H${pb.x}" fill="none" style="stroke:var(--muted)" stroke-width="1.3"/>`;pos[n+i]={x:xx,y:(pa.y+pb.y)/2}});
+    ordem.forEach(leaf=>{const g=gs[leaf],p=pos[leaf];const cc=CORES[lab[leaf]%CORES.length];const cm=comunidadeDe(R,g.grupo);dend+=`<circle cx="${xR+8}" cy="${p.y}" r="5" style="fill:${cc}"/><text x="${xL-12}" y="${p.y+4}" text-anchor="end" font-size="13" style="fill:var(--ink)">${esc(g.grupo)}</text><text x="${xL-8}" y="${p.y+4}" font-size="11" style="fill:var(--muted)">${esc(g.zona)}${cm>=0?' · com. '+(cm+1):''}</text>`});
+    dend+=`<text x="${xR}" y="${Hd-10}" text-anchor="end" font-size="11" style="fill:var(--muted)">altura da junção (distância): 0 à direita, ${f2(maxh)} à esquerda</text></svg>`;
+    const testes=[['morfologia ~ distância geográfica',Dm,Dg,null],['morfologia ~ distância na rede',Dm,Dn,null],['morfologia ~ província',Dm,Dp,null],['morfologia ~ geografia, controlando a rede',Dm,Dg,Dn],['morfologia ~ rede, controlando a geografia',Dm,Dn,Dg]].map(([nm,A,B,C])=>({nm,...mantel(A,B,C,{nperm:4999})}));
+    const jk=n>=4?linhas.map((r,k)=>{const idx=linhas.map((_,i)=>i).filter(i=>i!==k);return{g:r.grupo,rr:pearson(upper(Dm,idx),upper(Dn,idx)),rg:pearson(upper(Dm,idx),upper(Dg,idx))}}):[];
+    const rs=jk.map(x=>x.rr),rg=jk.map(x=>x.rg);
+    resto=`<h3>Agrupar: dendrograma</h3>
+    <div class="controlos"><label class="campo">Método de ligação<select data-bind="morfo.metodo">${[['average','média (UPGMA)'],['ward','Ward'],['complete','completa'],['single','simples']].map(([v,t])=>`<option value="${v}" ${v===m.metodo?'selected':''}>${t}</option>`).join('')}</select></label>
+    <label class="campo">Cortar em: <span data-out="morfo.k">${m.k}</span><input type="range" min="1" max="${Math.min(6,n)}" step="1" data-bind="morfo.k" value="${Math.min(m.k,n)}"></label></div>
+    ${dend}
+    <p class="nota">Cor à direita: grupo morfológico no corte escolhido. Ao lado de cada nome: zona e comunidade na rede (secção 4). Se os grupos morfológicos coincidem com as comunidades e não com as zonas, a forma segue as pessoas.</p>
+    <h3>Testar: Mantel</h3>
+    ${R.desligada?`<div class="alerta">A rede da secção 4 está desligada: há grupos sem caminho entre si. A distância "infinita" foi substituída pela maior distância observada mais 1, uma convenção arbitrária. Liga os grupos (ou retira-os) na secção 4.</div>`:''}
+    <div class="tabwrap"><table><tr><th>teste</th><th class="num">r</th><th class="num">p</th><th>permutações</th></tr>${testes.map(t=>`<tr><td>${t.nm}</td><td class="num ${t.p<.05?'forte':''}">${f2(t.r)}</td><td class="num">${t.p<.001?'<0,001':f3(t.p)}</td><td>${t.nperm.toLocaleString('pt-PT')} ${t.exact?'(todas as possíveis)':'(aleatórias)'}</td></tr>`).join('')}</table></div>
+    <p class="nota">${n} grupos dão ${n*(n-1)/2} pares. Com poucos grupos o teste tem pouco poder: um r alto com p pequeno é encorajador, não prova.</p>
+    ${jk.length?`<h4>Robustez: retirar um grupo de cada vez</h4><div class="tabwrap"><table><tr><th>sem o grupo</th><th class="num">r com a rede</th><th class="num">r com a geografia</th></tr>${jk.map(x=>`<tr><td>${esc(x.g)}</td><td class="num">${f2(x.rr)}</td><td class="num">${f2(x.rg)}</td></tr>`).join('')}</table></div><p class="nota">r com a rede entre ${f2(Math.min(...rs))} e ${f2(Math.max(...rs))}; com a geografia entre ${f2(Math.min(...rg))} e ${f2(Math.max(...rg))}. Se um único grupo muda a conclusão, a conclusão é frágil.</p>`:''}`}
+  el.innerHTML=`<h2>Morfometria comparada</h2>
+  <div class="prosa"><p>Primeiro, a razão para medir no manequim. Depois, as medidas de um traje de festa por grupo da amostra, o dendrograma e os testes de Mantel contra a geografia e contra a rede da secção 4.</p></div>
+  <h3>Portadoras ou manequim?</h3>${manHtml}
+  <h3>As medidas (editáveis)</h3>
+  <div class="tabwrap"><table><tr><th>grupo</th><th>zona</th>${MVARS.map(([k,t])=>`<th class="num"><label style="display:inline-flex;gap:4px;align-items:center"><input type="checkbox" data-mvar="${k}" ${m.vars[k]?'checked':''} aria-label="usar ${t}">${t}</label></th>`).join('')}</tr>
+  ${linhas.map(r=>{const i=m.linhas.indexOf(r);const g=grupoPor(r.grupo);return`<tr><td><strong>${esc(r.grupo)}</strong></td><td><span class="tag t-${g.zona}">${g.zona}</span></td>${MVARS.map(([k])=>`<td class="num"><input type="number" step="any" data-bind="morfo.linhas.${i}.${k}" value="${r[k]}"></td>`).join('')}</tr>`}).join('')}</table></div>
+  ${falta.length?`<div class="alerta">Sem medidas: ${falta.map(esc).join(', ')}. <button class="pequeno" id="gerarFalta">Gerar medidas em falta</button></div>`:''}
+  <p class="nota">Saia/altura e bainha/altura: medidas divididas pela altura do manequim. L*: luminosidade (0 preto, 100 branco); a*: do verde ao vermelho; b*: do azul ao amarelo. A caixa em cada coluna decide se a medida entra na distância.</p>
+  <details><summary>Gerar novas medidas para toda a amostra</summary>
+   <p class="nota">As medidas inventadas misturam um perfil da rede oculta de cada grupo com um perfil da zona. Com o cursor todo à direita a forma segue a rede; todo à esquerda segue a geografia. Muda-o e vê o que acontece ao Mantel. Repara que, mesmo com a forma a seguir a zona, a correlação com a distância em quilómetros fica moderada: grupos da mesma zona podem estar a 90 km uns dos outros. Zona e distância não são a mesma coisa.</p>
+   <div class="controlos"><label class="campo">A forma segue… geografia ↔ rede: <span data-out="morfo.gen.pesoRede" data-fmt="pct">${Math.round(m.gen.pesoRede*100)}%</span><input type="range" min="0" max="1" step="0.05" data-bind="morfo.gen.pesoRede" data-fmt="pct" value="${m.gen.pesoRede}"></label>
+   <label class="campo">Ruído: <span data-out="morfo.gen.ruido">${m.gen.ruido}</span><input type="range" min="0" max="4" step="0.25" data-bind="morfo.gen.ruido" value="${m.gen.ruido}"></label>
+   <label class="campo">Semente<input type="number" data-bind="morfo.gen.seed" value="${m.gen.seed}"></label></div>
+   <button class="principal" id="gerarM">Gerar novas medidas</button> <button id="reporM">Repor as medidas originais</button>
+  </details>
+  ${resto}`;
+  ligar(el);
+  el.querySelectorAll('[data-mvar]').forEach(c=>c.addEventListener('change',()=>{m.vars[c.dataset.mvar]=c.checked;refazer()}));
+  const q=id=>el.querySelector('#'+id);
+  q('gerarFalta')&&q('gerarFalta').addEventListener('click',()=>{const rnd=mulberry32((+m.gen.seed||1)+falta.length);falta.forEach(g=>m.linhas.push(gerarMedida(grupoPor(g),rnd)));refazer()});
+  q('gerarM')&&q('gerarM').addEventListener('click',()=>{const rnd=mulberry32(+m.gen.seed||1);const novas=samp.map(g=>gerarMedida(grupoPor(g),rnd));m.linhas=m.linhas.filter(r=>!samp.includes(r.grupo)).concat(novas);refazer()});
+  q('reporM')&&q('reporM').addEventListener('click',()=>{m.linhas=estadoInicial().morfo.linhas;refazer()});
+  el.querySelectorAll('details').forEach((d,i)=>{if(S['det2_'+i])d.open=true;d.addEventListener('toggle',()=>{S['det2_'+i]=d.open;guardar()})});
+}
+
+/* ================= 3. confronto ================= */
+const CODS=['mantido','alterado','acrescentado','omitido'];
+function render3(){
+  const el=sec(3),c=S.confronto;
+  const cont=CODS.map(k=>c.linhas.filter(l=>l.cod===k).length),tot=c.linhas.length||1;
+  const xs=c.props.map(p=>+p.ano);
+  el.innerHTML=`<h2>Confronto entre modelo e imagem histórica</h2>
+  <div class="prosa"><p>Começa pela crítica da fonte, depois preenche a grelha elemento a elemento. Os códigos comparam sempre com a primeira fonte. Acrescenta elementos, muda as fontes, muda os anos.</p></div>
+  <h3>Crítica da fonte: ${esc(c.fontes[0])}</h3>
+  <div class="painel"><div class="controlos">${[['data','Data'],['autor','Autor ou editor'],['contexto','Contexto de produção'],['finalidade','Finalidade']].map(([k,t])=>`<label class="campo">${t}<input type="text" data-bind="confronto.critica.${k}" value="${esc(c.critica[k])}" style="width:210px"></label>`).join('')}</div>
+  <label class="campo" style="margin-top:10px">O que a crítica revela<textarea data-bind="confronto.critica.nota">${esc(c.critica.nota)}</textarea></label></div>
+  <h3>A grelha</h3>
+  <div class="tabwrap"><table><tr><th>elemento</th>${c.fontes.map((f,i)=>`<th><input type="text" data-bind="confronto.fontes.${i}" value="${esc(f)}" style="min-width:110px" aria-label="nome da fonte ${i+1}"></th>`).join('')}<th>código face à 1.ª fonte</th><th></th></tr>
+  ${c.linhas.map((l,i)=>`<tr><td><input type="text" data-bind="confronto.linhas.${i}.el" value="${esc(l.el)}"></td>${l.v.map((v,j)=>`<td><input type="text" data-bind="confronto.linhas.${i}.v.${j}" value="${esc(v)}"></td>`).join('')}<td><select data-bind="confronto.linhas.${i}.cod">${CODS.map(k=>`<option ${k===l.cod?'selected':''}>${k}</option>`).join('')}</select></td><td><button class="pequeno" data-delc="${i}">apagar</button></td></tr>`).join('')}</table></div>
+  <button class="pequeno" id="addC">Acrescentar elemento</button>
+  ${barrasH(CODS.map((k,i)=>({rot:k,valor:cont[i],txt:cont[i]+' ('+pct(cont[i]/tot*100)+')',cor:CORES[i]})))}
+  <h3>Proporções ao longo do tempo</h3>
+  <div class="tabwrap"><table><tr><th>fonte</th><th class="num">ano</th><th class="num">saia/altura</th><th class="num">± incerteza</th><th class="num">bainha/altura</th><th class="num">± incerteza</th></tr>
+  ${c.props.map((p,i)=>`<tr><td><input type="text" data-bind="confronto.props.${i}.rot" value="${esc(p.rot)}"></td>${['ano','saia','eSaia','bainha','eBainha'].map(k=>`<td class="num"><input type="number" step="any" data-bind="confronto.props.${i}.${k}" value="${p[k]}"></td>`).join('')}</tr>`).join('')}</table></div>
+  <div class="controlos"><label class="campo">Ano de entrada na Federação (marcador)<input type="number" data-bind="confronto.ffp" value="${c.ffp}"></label></div>
+  <div class="duas"><div><h4>Saia/altura</h4>${graficoLinhas({rotulos:c.props.map(p=>String(p.ano)),xNum:xs,series:[{nome:'saia/altura',valores:c.props.map(p=>+p.saia),erros:c.props.map(p=>+p.eSaia)}],marcadores:c.ffp?[{x:+c.ffp,rot:'Federação'}]:[],h:260,aria:'saia/altura ao longo do tempo'})}</div>
+  <div><h4>Bainha/altura</h4>${graficoLinhas({rotulos:c.props.map(p=>String(p.ano)),xNum:xs,series:[{nome:'bainha/altura',valores:c.props.map(p=>+p.bainha),erros:c.props.map(p=>+p.eBainha)}],marcadores:c.ffp?[{x:+c.ffp,rot:'Federação'}]:[],h:260,aria:'bainha/altura ao longo do tempo'})}</div></div>
+  <p class="nota">As barras verticais mostram a incerteza de medir numa fotografia com outra pose e outro corpo. Se a mudança acontece perto do marcador da Federação, tens uma pergunta histórica.</p>`;
+  ligar(el);
+  el.querySelectorAll('[data-delc]').forEach(b=>b.addEventListener('click',()=>{c.linhas.splice(+b.dataset.delc,1);refazer()}));
+  el.querySelector('#addC').addEventListener('click',()=>{c.linhas.push({el:'',v:c.fontes.map(()=>''),cod:'mantido'});refazer()});
+}
+
+/* ================= 4. redes ================= */
+function layoutRede(R){
+  const nodes=R.nodes,pos={},rnd=mulberry32(7);const W=680,H=440;
+  nodes.forEach((v,i)=>{if(S.rede.pos[v])pos[v]={...S.rede.pos[v]}});
+  const livres=nodes.filter(v=>!pos[v]);
+  const gs=R.samp;gs.forEach((g,i)=>{if(!pos[g]){const cm=Math.max(0,comunidadeDe(R,g));const ang=2*Math.PI*i/gs.length;pos[g]={x:W/2+Math.cos(ang)*170+(cm%2?60:-60),y:H/2+Math.sin(ang)*150}}});
+  nodes.forEach(v=>{if(!pos[v]){const nb=R.adj[v];const mx=nb.length?nb.reduce((s,g)=>s+pos[g].x,0)/nb.length:W/2,my=nb.length?nb.reduce((s,g)=>s+pos[g].y,0)/nb.length:H/2;pos[v]={x:mx+(rnd()-.5)*40,y:my+(rnd()-.5)*40}}});
+  if(livres.length){const k=62;for(let it=0;it<300;it++){const disp={};nodes.forEach(v=>disp[v]={x:0,y:0});
+    for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const a=pos[nodes[i]],b=pos[nodes[j]];let dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy)||.01;const f=k*k/d;disp[nodes[i]].x+=dx/d*f;disp[nodes[i]].y+=dy/d*f;disp[nodes[j]].x-=dx/d*f;disp[nodes[j]].y-=dy/d*f}
+    nodes.forEach(v=>R.adj[v].forEach(w=>{if(v<w){const a=pos[v],b=pos[w];let dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy)||.01;const f=d*d/k;disp[v].x-=dx/d*f;disp[v].y-=dy/d*f;disp[w].x+=dx/d*f;disp[w].y+=dy/d*f}}));
+    const t=20*(1-it/300)+1;livres.forEach(v=>{const d=disp[v],l=Math.hypot(d.x,d.y)||1;pos[v].x+=d.x/l*Math.min(l,t);pos[v].y+=d.y/l*Math.min(l,t);pos[v].x+=(W/2-pos[v].x)*0.01;pos[v].y+=(H/2-pos[v].y)*0.01})}}
+  nodes.forEach(v=>{pos[v].x=Math.max(40,Math.min(W-40,pos[v].x));pos[v].y=Math.max(30,Math.min(H-30,pos[v].y))});
+  return pos}
+function render4(){
+  const el=sec(4),rd=S.rede,R=calcularRede(),samp=R.samp;const pos=layoutRede(R);
+  const tipos=Object.keys(rd.pesos);
+  const corTipo=t=>t==='costureira'?'var(--garanca)':t==='consultor'?'var(--ocre)':'var(--pastel)';
+  const topB=Object.entries(R.bc).sort((a,b)=>b[1]-a[1])[0];
+  let svg=`<svg class="grafico" id="svgRede" style="touch-action:none" viewBox="0 0 680 440" role="img" aria-label="Rede entre pessoas e grupos">`;
+  R.pessoas.forEach(p=>p.grupos.forEach(g=>{const a=pos['@'+p.nome],b=pos[g];const w=+(rd.pesos[p.tipo]??1);svg+=`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" style="stroke:${corTipo(p.tipo)};opacity:.75" stroke-width="${0.8+w*0.6}" ${p.tipo==='consultor'?'stroke-dasharray="6 4"':''}/>`}));
+  samp.forEach(g=>{const p=pos[g],cm=comunidadeDe(R,g);svg+=`<g data-no="${esc(g)}" style="cursor:grab"><rect x="${p.x-24}" y="${p.y-14}" width="48" height="28" rx="4" style="fill:var(--surface2);stroke:${cm>=0?CORES[cm%CORES.length]:'var(--muted)'}" stroke-width="2.4"/><text x="${p.x}" y="${p.y+4.5}" text-anchor="middle" font-size="13" font-weight="600" style="fill:var(--ink)">${esc(g)}</text></g>`});
+  R.pessoas.forEach(pp=>{const v='@'+pp.nome,p=pos[v];const destaque=topB&&topB[0]===v;svg+=`<g data-no="${esc(v)}" style="cursor:grab">${destaque?`<circle cx="${p.x}" cy="${p.y}" r="14" fill="none" style="stroke:var(--ink)" stroke-width="1" stroke-dasharray="3 2"/>`:''}<circle cx="${p.x}" cy="${p.y}" r="8" style="fill:${corTipo(pp.tipo)};stroke:var(--surface2)" stroke-width="2"/><text x="${p.x}" y="${p.y+22}" text-anchor="middle" font-size="11.5" style="fill:var(--muted)">${esc(pp.nome)}</text></g>`});
+  svg+='</svg>';
+  const rank=Object.entries(R.bc).map(([v,b])=>({v,b,g:R.adj[v].length})).sort((a,b)=>b.b-a.b||b.g-a.g);
+  el.innerHTML=`<h2>Redes de circulação</h2>
+  <div class="prosa"><p>Pessoas e grupos da amostra. Liga e desliga pessoas, muda os grupos a que cada uma está ligada, acrescenta quem quiseres. Arrasta os nós para arrumar o desenho. A rede alimenta o teste de Mantel da secção 2.</p><p>Experimenta desligar o ensaiador E3 e vê a rede partir-se.</p></div>
+  ${R.desligada?`<div class="alerta">A rede está desligada: há grupos sem nenhum caminho entre si. Na secção 2, a distância entre eles passa a ser uma convenção arbitrária.</div>`:''}
+  ${svg}
+  <div class="cartoes" style="font-size:13px;color:var(--muted);gap:6px 18px"><span><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" style="fill:var(--garanca)"/></svg> costureira</span><span><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" style="fill:var(--ocre)"/></svg> consultor (tracejado)</span><span><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" style="fill:var(--pastel)"/></svg> ensaiador, fundador, outro</span><span>contorno do grupo = comunidade · círculo tracejado = maior intermediação</span></div>
+  <button class="pequeno" id="reLayout">Rearrumar o desenho</button>
+  <div class="duas">
+   <div><h3>Centralidade</h3><div class="tabwrap"><table><tr><th>nó</th><th class="num">grau</th><th class="num">intermediação</th></tr>${rank.map(r=>`<tr><td>${esc(r.v.replace(/^@/,''))}</td><td class="num">${r.g}</td><td class="num ${r===rank[0]?'forte':''}">${f3(r.b)}</td></tr>`).join('')}</table></div>
+   <p class="nota">Grau: número de ligações. Intermediação: quantos caminhos mais curtos passam pelo nó. Quem tem mais ligações nem sempre é a ponte.</p></div>
+   <div><h3>Comunidades (Louvain)</h3><div class="tabwrap"><table><tr><th>comunidade</th><th>grupos</th></tr>${R.comms.map((c,i)=>`<tr><td><span class="tag" style="background:${CORES[i%CORES.length]};color:var(--surface2)">${i+1}</span></td><td>${c.map(esc).join(', ')}</td></tr>`).join('')}</table></div>
+   <h4>Pesos por tipo de ligação</h4><div class="controlos">${tipos.map(t=>`<label class="campo">${esc(t)}<input type="number" step="0.5" min="0" data-bind="rede.pesos.${t}" value="${rd.pesos[t]}"></label>`).join('')}</div>
+   <p class="nota">O peso de uma ligação entre dois grupos é a soma dos pesos das pessoas que partilham. A distância na rede é o inverso do peso, somado ao longo do caminho mais curto.</p></div>
+  </div>
+  <h3>Pessoas</h3>
+  <div class="tabwrap"><table><tr><th>ativa</th><th>nome</th><th>tipo</th><th>grupos a que está ligada</th><th></th></tr>
+  ${rd.pessoas.map((p,i)=>`<tr><td><input type="checkbox" data-bind="rede.pessoas.${i}.ativo" ${p.ativo?'checked':''} aria-label="ativar ${esc(p.nome)}"></td><td><input type="text" data-bind="rede.pessoas.${i}.nome" value="${esc(p.nome)}"></td><td><select data-bind="rede.pessoas.${i}.tipo">${tipos.map(t=>`<option ${t===p.tipo?'selected':''}>${t}</option>`).join('')}</select></td><td><div class="lista-grupos">${samp.map(g=>`<label><input type="checkbox" data-pg="${i}|${esc(g)}" ${p.grupos.includes(g)?'checked':''}>${esc(g)}</label>`).join('')}</div></td><td><button class="pequeno" data-delp="${i}">apagar</button></td></tr>`).join('')}</table></div>
+  <button class="pequeno" id="addP">Acrescentar pessoa</button>
+  <details><summary>Distâncias na rede entre grupos</summary><div class="tabwrap"><table><tr><th></th>${samp.map(g=>`<th class="num">${esc(g)}</th>`).join('')}</tr>${samp.map((a,i)=>`<tr><th>${esc(a)}</th>${R.D[i].map(x=>`<td class="num">${isFinite(x)?f2(x):'∞'}</td>`).join('')}</tr>`).join('')}</table></div></details>`;
+  ligar(el,(inp)=>{if(inp.dataset.bind.endsWith('.nome')){S.rede.pos={}}refazer()});
+  el.querySelectorAll('[data-pg]').forEach(c=>c.addEventListener('change',()=>{const[i,g]=c.dataset.pg.split('|');const p=rd.pessoas[+i];p.grupos=c.checked?[...new Set(p.grupos.concat(g))]:p.grupos.filter(x=>x!==g);refazer()}));
+  el.querySelectorAll('[data-delp]').forEach(b=>b.addEventListener('click',()=>{rd.pessoas.splice(+b.dataset.delp,1);refazer()}));
+  el.querySelector('#addP').addEventListener('click',()=>{rd.pessoas.push({nome:'Pessoa '+(rd.pessoas.length+1),tipo:'costureira',grupos:[],ativo:true});refazer()});
+  el.querySelector('#reLayout').addEventListener('click',()=>{S.rede.pos={};refazer()});
+  /* arrastar */
+  const svgEl=el.querySelector('#svgRede');let alvo=null;
+  const pt=e=>{const r=svgEl.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*680,y:(e.clientY-r.top)/r.height*440}};
+  svgEl.querySelectorAll('[data-no]').forEach(g=>g.addEventListener('pointerdown',e=>{alvo=g.dataset.no;svgEl.setPointerCapture&&svgEl.setPointerCapture(e.pointerId);e.preventDefault()}));
+  svgEl.addEventListener('pointermove',e=>{if(!alvo)return;const p=pt(e);Object.keys(pos).forEach(v=>S.rede.pos[v]=S.rede.pos[v]||{...pos[v]});S.rede.pos[alvo]={x:Math.max(30,Math.min(650,p.x)),y:Math.max(24,Math.min(416,p.y))};pos[alvo]=S.rede.pos[alvo];redesenharRede(svgEl,R,pos,corTipo,topB)});
+  const fim=()=>{if(alvo){alvo=null;guardar()}};svgEl.addEventListener('pointerup',fim);svgEl.addEventListener('pointercancel',fim);
+}
+function redesenharRede(svgEl,R,pos,corTipo,topB){
+  const lines=svgEl.querySelectorAll('line');let k=0;R.pessoas.forEach(p=>p.grupos.forEach(g=>{const a=pos['@'+p.nome],b=pos[g];const l=lines[k++];if(l){l.setAttribute('x1',a.x);l.setAttribute('y1',a.y);l.setAttribute('x2',b.x);l.setAttribute('y2',b.y)}}));
+  svgEl.querySelectorAll('[data-no]').forEach(g=>{const p=pos[g.dataset.no];const r=g.querySelector('rect');if(r){r.setAttribute('x',p.x-24);r.setAttribute('y',p.y-14);const t=g.querySelector('text');t.setAttribute('x',p.x);t.setAttribute('y',p.y+4.5)}else{g.querySelectorAll('circle').forEach(c=>{c.setAttribute('cx',p.x);c.setAttribute('cy',p.y)});const t=g.querySelector('text');t.setAttribute('x',p.x);t.setAttribute('y',p.y+22)}})}
+
+/* ================= 5. história oral ================= */
+function render5(){
+  const el=sec(5),o=S.oral,samp=amostra();
+  const max=Math.max(1,...o.tabela.flatMap(r=>r.v.map(Number)));
+  const heat=v=>`background:color-mix(in srgb, var(--anil) ${Math.round(+v/max*55)}%, transparent);`;
+  el.innerHTML=`<h2>História oral como leitura próxima</h2>
+  <div class="prosa"><p>Uma passagem codificada alimenta ao mesmo tempo a ficha, a rede e a interpretação das classes. Muda o excerto, os códigos e as ligações. A pessoa nova pode ir diretamente para a rede da secção 4.</p></div>
+  <h3>Uma passagem</h3>
+  <div class="painel"><div class="controlos"><label class="campo">Entrevista<input type="text" data-bind="oral.meta.id" value="${esc(o.meta.id)}" style="width:90px"></label><label class="campo">Perfil<input type="text" data-bind="oral.meta.perfil" value="${esc(o.meta.perfil)}" style="width:240px"></label></div>
+  <label class="campo" style="margin-top:10px">Excerto<textarea class="excerto" data-bind="oral.excerto">${esc(o.excerto)}</textarea></label>
+  <h4>Códigos aplicados</h4><div class="lista-grupos">${o.codigos.map((c,i)=>`<label><input type="checkbox" data-cod="${i}" ${o.aplicados.includes(c)?'checked':''}>${esc(c)}</label>`).join('')}</div>
+  <div class="controlos" style="margin-top:8px"><label class="campo">Novo código<input type="text" id="novoCod" style="width:200px"></label><button class="pequeno" id="addCod">Acrescentar código</button></div>
+  <h4>Ligações desta passagem</h4>
+  <div class="controlos"><label class="campo">Peça (ficha)<input type="text" data-bind="oral.lig.peca" value="${esc(o.lig.peca)}" style="width:170px"></label><label class="campo">Evento<input type="text" data-bind="oral.lig.evento" value="${esc(o.lig.evento)}" style="width:190px"></label></div>
+  <div class="controlos" style="margin-top:8px"><label class="campo">Pessoa nova<input type="text" data-bind="oral.lig.pessoa" value="${esc(o.lig.pessoa)}" style="width:170px"></label>
+   <label class="campo">Tipo<select data-bind="oral.lig.tipo">${Object.keys(S.rede.pesos).map(t=>`<option ${t===o.lig.tipo?'selected':''}>${t}</option>`).join('')}</select></label>
+   <label class="campo">Grupo<select data-bind="oral.lig.grupo">${samp.map(g=>`<option ${g===o.lig.grupo?'selected':''}>${esc(g)}</option>`).join('')}</select></label>
+   <button class="pequeno" id="paraRede">Acrescentar à rede</button></div>
+  <p class="nota" id="msgRede"></p></div>
+  <h3>Códigos por classe</h3>
+  <p class="nota">Percentagem das passagens ligadas a trajes de cada classe que têm o código. Uma passagem pode ter vários códigos, por isso as colunas não somam 100.</p>
+  <div class="tabwrap"><table><tr><th>código</th>${o.classes.map((c,j)=>`<th class="num"><input type="text" data-bind="oral.classes.${j}" value="${esc(c)}" style="width:110px;text-align:right" aria-label="nome da classe ${j+1}"></th>`).join('')}<th></th></tr>
+  ${o.tabela.map((r,i)=>`<tr><td><input type="text" data-bind="oral.tabela.${i}.cod" value="${esc(r.cod)}"></td>${r.v.map((v,j)=>`<td class="num" style="${heat(v)}"><input type="number" min="0" max="100" data-bind="oral.tabela.${i}.v.${j}" value="${v}"></td>`).join('')}<td><button class="pequeno" data-delt="${i}">apagar</button></td></tr>`).join('')}</table></div>
+  <button class="pequeno" id="addLinha">Acrescentar código à tabela</button>
+  ${(()=>{const js=o.classes.map((_,j)=>j);const lead=o.tabela.map(r=>{const v=r.v.map(Number);const mx=Math.max(...v);return{c:r.cod,j:v.indexOf(mx),mx}});return`<div class="info">${lead.map(l=>`${esc(l.c)}: mais forte em <strong>${esc(o.classes[l.j])}</strong> (${l.mx}%)`).join('<br>')}</div>`})()}
+  <h3>A tua leitura</h3>
+  <textarea data-bind="oral.nota" placeholder="Ex.: a classe 'mercado' tem tanto orgulho local como as outras; os sintéticos explicam-se pela lavagem depois de cada festival. Mudar o nome para 'pragmático'?">${esc(o.nota)}</textarea>`;
+  ligar(el);
+  el.querySelectorAll('[data-cod]').forEach(c=>c.addEventListener('change',()=>{const nm=o.codigos[+c.dataset.cod];o.aplicados=c.checked?[...new Set(o.aplicados.concat(nm))]:o.aplicados.filter(x=>x!==nm);guardar()}));
+  el.querySelector('#addCod').addEventListener('click',()=>{const v=el.querySelector('#novoCod').value.trim();if(v&&!o.codigos.includes(v)){o.codigos.push(v);refazer()}});
+  el.querySelector('#addLinha').addEventListener('click',()=>{o.tabela.push({cod:'novo código',v:o.classes.map(()=>0)});refazer()});
+  el.querySelectorAll('[data-delt]').forEach(b=>b.addEventListener('click',()=>{o.tabela.splice(+b.dataset.delt,1);refazer()}));
+  el.querySelector('#paraRede').addEventListener('click',()=>{const nm=o.lig.pessoa.trim();const msg=el.querySelector('#msgRede');if(!nm){msg.textContent='Escreve o nome da pessoa primeiro.';return}
+    let p=S.rede.pessoas.find(x=>x.nome===nm);if(p){p.grupos=[...new Set(p.grupos.concat(o.lig.grupo))];p.ativo=true}else S.rede.pessoas.push({nome:nm,tipo:o.lig.tipo,grupos:[o.lig.grupo],ativo:true});
+    guardar();msg.textContent=`${nm} está agora na rede, ligada a ${o.lig.grupo}. Vê a secção 4.`});
+}
+
+/* ================= 6. PREC ================= */
+function render6(){
+  const el=sec(6),p=S.prec;
+  const series=p.familias.map((f,k)=>({nome:f,valores:p.anos.map(a=>p.modo==='pct'?+a.v[k]:Math.round(+a.v[k]*(+a.artigos)/100))}));
+  el.innerHTML=`<h2>O capítulo do PREC</h2>
+  <div class="prosa"><p>Artigos que mencionam folclore ou ranchos, ano a ano, e a percentagem em que cada família de termos aparece junto de "folclore". Edita os números, acrescenta anos e famílias de termos.</p></div>
+  <div class="controlos"><label class="campo">Mostrar<select data-bind="prec.modo"><option value="pct" ${p.modo==='pct'?'selected':''}>percentagem dos artigos do ano</option><option value="abs" ${p.modo==='abs'?'selected':''}>número estimado de artigos</option></select></label></div>
+  ${graficoLinhas({rotulos:p.anos.map(a=>String(a.ano)),series,yTitulo:p.modo==='pct'?'% dos artigos do ano':'número de artigos (estimado)',yMin:0,aria:'Termos associados a folclore por ano'})}
+  ${p.modo==='abs'?`<div class="alerta">Em números absolutos, os anos com mais artigos parecem sempre mais "intensos". 1974 tem muito menos artigos do que 1978: compara em percentagem.</div>`:''}
+  <div class="tabwrap"><table><tr><th>ano</th><th class="num">artigos</th>${p.familias.map((f,k)=>`<th><input type="text" data-bind="prec.familias.${k}" value="${esc(f)}" style="min-width:150px" aria-label="família ${k+1}"> <button class="pequeno" data-delf="${k}" aria-label="apagar família">×</button></th>`).join('')}<th></th></tr>
+  ${p.anos.map((a,i)=>`<tr><td><input type="number" data-bind="prec.anos.${i}.ano" value="${a.ano}"></td><td class="num"><input type="number" min="0" data-bind="prec.anos.${i}.artigos" value="${a.artigos}"></td>${a.v.map((v,k)=>`<td class="num"><input type="number" min="0" max="100" data-bind="prec.anos.${i}.v.${k}" value="${v}"> %</td>`).join('')}<td><button class="pequeno" data-dela="${i}">apagar</button></td></tr>`).join('')}</table></div>
+  <button class="pequeno" id="addAno">Acrescentar ano</button> <button class="pequeno" id="addFam">Acrescentar família de termos</button>
+  <p class="nota">Total de artigos no corpus: ${p.anos.reduce((s,a)=>s+(+a.artigos||0),0)}.</p>
+  <h3>Palavras mais próximas de "folclore"</h3>
+  <div class="duas">${p.coloc.map((c,i)=>`<div class="painel"><label class="campo">Ano<input type="text" data-bind="prec.coloc.${i}.ano" value="${esc(c.ano)}" style="width:80px"></label><label class="campo" style="margin-top:8px">Colocações, separadas por vírgulas<textarea data-bind="prec.coloc.${i}.termos">${esc(c.termos)}</textarea></label><div class="cartoes">${c.termos.split(',').map(t=>t.trim()).filter(Boolean).map(t=>`<span class="tag t-litoral">${esc(t)}</span>`).join('')}</div></div>`).join('')}</div>
+  <h3>Antes de escrever a hipótese</h3>
+  ${p.checks.map((c,i)=>`<label style="display:flex;gap:8px;align-items:flex-start;margin:6px 0"><input type="checkbox" data-bind="prec.checks.${i}.ok" ${c.ok?'checked':''}> <span>${esc(c.t)}</span></label>`).join('')}
+  ${p.checks.every(c=>c.ok)?`<div class="info">As três verificações estão feitas. A hipótese pode ir para o texto, com as suas limitações ditas.</div>`:`<div class="alerta">Faltam ${p.checks.filter(c=>!c.ok).length} verificações. Até lá, a curva é um mapa, não uma conclusão.</div>`}`;
+  ligar(el);
+  el.querySelectorAll('[data-dela]').forEach(b=>b.addEventListener('click',()=>{p.anos.splice(+b.dataset.dela,1);refazer()}));
+  el.querySelectorAll('[data-delf]').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.delf;if(p.familias.length<=1)return;p.familias.splice(k,1);p.anos.forEach(a=>a.v.splice(k,1));refazer()}));
+  el.querySelector('#addAno').addEventListener('click',()=>{const u=p.anos[p.anos.length-1];p.anos.push({ano:u?+u.ano+1:1979,artigos:0,v:p.familias.map(()=>0)});refazer()});
+  el.querySelector('#addFam').addEventListener('click',()=>{if(p.familias.length>=6)return;p.familias.push('nova família');p.anos.forEach(a=>a.v.push(0));refazer()});
+}
+
+/* ================= exportar / importar ================= */
+let DL=null;
+function abrirModal(html){const m=document.getElementById('modal');document.getElementById('modalCaixa').innerHTML=html;m.classList.add('aberto');const f=m.querySelector('button,textarea,select,input');f&&f.focus()}
+function fecharModal(){document.getElementById('modal').classList.remove('aberto')}
+async function guardarFicheiro(nome,conteudo){
+  if(DL){try{await DL.save({filename:nome,data:conteudo});return}catch(e){if(e&&e.code==='declined')return;if(e&&e.code==='rate_limited'){alert('Já há um pedido de gravação aberto. Tenta de novo daqui a pouco.');return}}}
+  if(!(window.claude&&window.claude.use)){try{const csv=/\.csv$/i.test(nome);const b=new Blob([(csv?'\ufeff':'')+conteudo],{type:csv?'text/csv;charset=utf-8':'application/json'});const u=URL.createObjectURL(b);const l=document.createElement('a');l.href=u;l.download=nome;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);return}catch(e){}}
+  abrirModal(`<h3 id="modalTitulo" style="margin-top:0">${esc(nome)}</h3><p class="nota">Não foi possível gravar o ficheiro diretamente aqui. Copia o conteúdo e cola-o num ficheiro de texto.</p><textarea id="conteudo" style="min-height:260px;font-family:monospace;font-size:12.5px">${esc(conteudo)}</textarea><div class="acoes" style="margin-top:10px"><button id="copiar" class="principal">Copiar</button><button id="fechar">Fechar</button></div>`);
+  document.getElementById('copiar').onclick=async()=>{const t=document.getElementById('conteudo');t.select();try{await navigator.clipboard.writeText(t.value)}catch(e){try{document.execCommand('copy')}catch(_){}}};
+  document.getElementById('fechar').onclick=fecharModal}
+function exportar(){
+  abrirModal(`<h3 id="modalTitulo" style="margin-top:0">Exportar</h3><p class="nota">O estado completo guarda tudo o que mudaste e pode ser importado mais tarde. Os CSV abrem no Excel, no R ou no Python.</p>
+  <div class="acoes"><button data-x="json" class="principal">Estado completo (JSON)</button><button data-x="trajes">Trajes (CSV)</button><button data-x="grupos">Grupos (CSV)</button><button data-x="morfo">Medidas (CSV)</button><button data-x="acm">Resultados da ACM (CSV)</button></div><div class="acoes" style="margin-top:14px"><button id="fechar">Fechar</button></div>`);
+  document.getElementById('fechar').onclick=fecharModal;
+  document.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{const x=b.dataset.x;fecharModal();
+    if(x==='json')guardarFicheiro('laboratorio-traje.json',JSON.stringify(S,null,1));
+    if(x==='trajes')guardarFicheiro('trajes.csv',toCSV(S.trajes));
+    if(x==='grupos')guardarFicheiro('grupos.csv',toCSV(S.grupos));
+    if(x==='morfo')guardarFicheiro('medidas.csv',toCSV(S.morfo.linhas));
+    if(x==='acm'){const R=calcularACM();if(R.erro){alert(R.erro);return}const rows=R.M.cats.map((c,j)=>({tipo:'ativa',variavel:c.v,categoria:c.l,coord1:R.M.G[j][0]?.toFixed(4),coord2:R.M.G[j][1]?.toFixed(4),contrib1:R.M.ctr[j][0]?.toFixed(2),contrib2:R.M.ctr[j][1]?.toFixed(2)})).concat(R.M.sup.map(s=>({tipo:'suplementar',variavel:s.v,categoria:s.l,coord1:s.coord[0]?.toFixed(4),coord2:s.coord[1]?.toFixed(4),contrib1:'',contrib2:'',vteste1:s.vtest[0]?.toFixed(2),vteste2:s.vtest[1]?.toFixed(2)})));guardarFicheiro('acm.csv',toCSV(rows,['tipo','variavel','categoria','coord1','coord2','contrib1','contrib2','vteste1','vteste2']))}})}
+function importar(){
+  abrirModal(`<h3 id="modalTitulo" style="margin-top:0">Importar</h3>
+  <div class="controlos"><label class="campo">O que estás a importar<select id="alvo"><option value="json">estado completo (JSON exportado daqui)</option><option value="trajes">trajes (CSV: uma linha por traje)</option><option value="grupos">grupos (CSV)</option><option value="morfo">medidas (CSV)</option></select></label><label class="campo">Ficheiro<input type="file" id="fich" accept=".csv,.json,.txt"></label></div>
+  <label class="campo" style="margin-top:10px">Ou cola aqui o conteúdo<textarea id="txt" style="min-height:180px;font-family:monospace;font-size:12.5px"></textarea></label>
+  <p class="nota">Trajes: precisa das colunas <code>grupo</code> e <code>traje</code>; todas as outras colunas aparecem na ACM como variáveis categóricas. Grupos: <code>grupo, zona, fundacao, arquivo, x, y, provincia, rede</code>. Medidas: <code>grupo, saia_altura, bainha_altura, cintura_bainha, camadas, L, a, b</code>.</p>
+  <p class="nota" id="erroImp" style="color:var(--garanca)"></p>
+  <div class="acoes"><button id="carregar" class="principal">Carregar</button><button id="fechar">Cancelar</button></div>`);
+  document.getElementById('fechar').onclick=fecharModal;
+  document.getElementById('fich').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{document.getElementById('txt').value=r.result;if(/\.json$/i.test(f.name))document.getElementById('alvo').value='json'};r.readAsText(f)};
+  document.getElementById('carregar').onclick=()=>{const alvo=document.getElementById('alvo').value,txt=document.getElementById('txt').value.trim(),err=document.getElementById('erroImp');
+    if(!txt){err.textContent='Não há nada para carregar: escolhe um ficheiro ou cola o conteúdo.';return}
+    try{
+      if(alvo==='json'){const o=JSON.parse(txt.replace(/^\ufeff/,''));if(!o||o.versao!==1||!o.grupos||!o.trajes)throw new Error('Este JSON não é um estado exportado deste laboratório.');S=o}
+      else{const rows=parseCSV(txt);if(!rows.length)throw new Error('O CSV não tem linhas de dados.');
+        if(alvo==='trajes'){if(!('grupo'in rows[0])||!('traje'in rows[0]))throw new Error('Faltam as colunas "grupo" e "traje".');S.trajes=rows;Object.keys(rows[0]).forEach(c=>{if(c!=='grupo'&&c!=='traje'&&!S.papeis[c])S.papeis[c]='ativa'});
+          rows.forEach(r=>{if(!grupoPor(r.grupo))S.grupos.push({grupo:r.grupo,zona:'campo',fundacao:1980,periodo:'1974-89',entrada_ffp:'',arquivo:'parcial',x:30,y:45,provincia:'Estremadura',rede:'R1',amostra:false})})}
+        if(alvo==='grupos'){if(!('grupo'in rows[0]))throw new Error('Falta a coluna "grupo".');S.grupos=rows.map(r=>({grupo:r.grupo,zona:r.zona||'campo',fundacao:+r.fundacao||1980,periodo:periodoDe(+r.fundacao||1980),entrada_ffp:r.entrada_ffp||'',arquivo:r.arquivo||'parcial',x:+r.x||0,y:+r.y||0,provincia:r.provincia||'Estremadura',rede:r.rede||'R1',amostra:String(r.amostra).toLowerCase()==='true'}));sincronizarTrajes()}
+        if(alvo==='morfo'){if(!('grupo'in rows[0]))throw new Error('Falta a coluna "grupo".');S.morfo.linhas=rows.map(r=>({grupo:r.grupo,saia_altura:+r.saia_altura,bainha_altura:+r.bainha_altura,cintura_bainha:+r.cintura_bainha,camadas:+r.camadas,L:+r.L,a:+r.a,b:+(r.b??r.b_)}))}}
+      fecharModal();guardar();montarNav();irPara(S.tab||0)}
+    catch(e){err.textContent=e.message||'Não foi possível ler o conteúdo.'}}}
+
+/* ================= arranque ================= */
+S=carregar();
+montarNav();irPara(S.tab||0);
+document.getElementById('bExportar').onclick=exportar;
+document.getElementById('bImportar').onclick=importar;
+document.getElementById('bRepor').onclick=()=>{abrirModal(`<h3 id="modalTitulo" style="margin-top:0">Repor os dados originais?</h3><p>Perdes todas as alterações feitas neste navegador. Se quiseres guardá-las, exporta primeiro o estado completo.</p><div class="acoes"><button id="sim" class="principal">Repor</button><button id="nao">Cancelar</button></div>`);
+  document.getElementById('sim').onclick=()=>{S=estadoInicial();guardar();fecharModal();montarNav();irPara(0)};
+  document.getElementById('nao').onclick=fecharModal};
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')fecharModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')fecharModal()});
+(async()=>{try{if(window.claude&&window.claude.use){DL=await window.claude.use('downloads')}}catch(e){DL=null}})();
+
+</script>
+</body>
+</html>
